@@ -14,28 +14,10 @@
             </div>
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
         </div>
-
         <div class="output">
             <div class="card">
-                <h3 id="title"></h3>
-                <pre id="output"></pre>
-            </div>
-            <div class="card">
-                <h3>History</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>0</td>
-                            <td>ls -lah</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h3 id="title">Hey there!</h3>
+                <pre id="output">...</pre>
             </div>
         </div>
     </div>
@@ -161,39 +143,54 @@
 
     var HistoryManager = (() => {
         const EMPTY = "";
-        var historyList = [];
-        var counter = 0;
+        var Immutable = require('remote').require('immutable');
+        var history = [Immutable.List([])];
+        var historyIndex = 0;
 
         function HistoryManager() {}
 
+        function operation(fn) {
+            var newVersion = fn(history[history.length - 1]);
+            history.push(newVersion);
+            historyIndex = history.length - 1;
+        }
+
         HistoryManager.prototype.push = item => {
-            historyList.push(item);
-            counter = historyList.length - 1;
+            operation(function(data) {
+                return data.push(Immutable.Map({
+                    command: item
+                }));
+            });
         };
 
         HistoryManager.prototype.forward = () => {
-            counter = Math.min(historyList.length - 1, ++counter);
+            historyIndex = Math.min(history.length - 1, ++historyIndex);
 
-            return historyList[counter] || EMPTY;
+            var last = history[historyIndex].last();
+
+            return last ? last.get('command') : EMPTY;
         };
 
         HistoryManager.prototype.backward = () => {
-            counter = Math.max(0, --counter);
+            var last = history[Math.max(0, historyIndex)].last();
 
-            return historyList[counter] || EMPTY;
+            var x = last ? last.get('command') : EMPTY;
+
+            historyIndex = Math.max(0, --historyIndex);
+
+            return x;
         };
 
         HistoryManager.prototype.history = () => {
-            var items = historyList;
-            var total = historyList.length;
+            var items = history[history.length - 1].toArray();
+            var total = history[history.length - 1].count();
 
-            return { items, total, counter };
+            return { items, total, counter: historyIndex };
         };
 
-        HistoryManager.prototype.count = () => historyList.length;
+        HistoryManager.prototype.count = () => history.length;
         HistoryManager.prototype.clear = () => {
-            historyList = [];
-            counter = historyList.length;
+            history.clear();
         }
 
         return HistoryManager;

@@ -1,4 +1,6 @@
-@import "theme";
+@import "components/mixins";
+@import "components/color";
+@import "components/theme";
 
 html, body {
     padding: 0;
@@ -27,7 +29,7 @@ h1, h2, h3, h4, h5, h6 {
         height: 80px;
         position: relative;
 
-        &__icon {
+        @include e(icon) {
             position: absolute;
             top: 50%;
             left: 20px;
