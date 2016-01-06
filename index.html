@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Personal Assistant</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="app/css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="input">
+            <div class="input__icon">
+                <span class="fa fa-terminal"></span>
+            </div>
+            <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
+        </div>
+
+        <div class="output">
+            <div class="card">
+                <h3 id="title"></h3>
+                <pre id="output"></pre>
+            </div>
+            <div class="card">
+                <h3>History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>ls -lah</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const UP = 38;
+    const DOWN = 40;
+    const ENTER = 13;
+    const input = document.getElementById('input');
+    const exec = require('child_process').exec;
+
+    document.addEventListener('keyup', event => {
+        switch (event.keyCode) {
+            case UP: input.value = historyManager.backward(); break;
+            case DOWN: input.value = historyManager.forward(); break;
+        }
+    });
+
+    input.addEventListener('keyup', event => {
+        if (event.keyCode == ENTER) {
+            var value = event.target.value;
+            processInput(value);
+            input.value = "";
+        }
+    });
+
+    var processInput = input => {
+        historyManager.push(input);
+
+        document.getElementById("title").innerHTML = input;
+        var contents = document.getElementById("output");
+        var res = exec(input, (err, stdout, stderr) => {
+            output.innerHTML = "";
+            if (err) output.innerHTML = err;
+            if (stdout) output.innerHTML = stdout;
+            if (stderr) output.innerHTML = stderr;
+        });
+
+        console.log(res);
+        // pluginManager.execute(input);
+    };
+
+    var Plugin = (() => {
+        var me = {};
+
+        function Plugin(name, cb, options, arguments) {
+            me.name = name;
+            me.cb = cb;
+            me.options = options;
+            me.arguments = arguments;
+        }
+
+        Plugin.prototype.usage = () => {
+            var output = [];
+            output.push("Usage:");
+            output.push([
+                '\t',
+                me.name,
+                ' ',
+                me.options ? "[options] " : " ",
+                me.arguments.map(arg => `<${arg.name}>`).join(' ')
+            ].join(''));
+            output.push("");
+
+            output.push("Arguments:");
+            me.arguments.forEach(arg => {
+                output.push([
+                    '\t',
+                    arg.name,
+                    '\t',
+                    arg.description
+                ].join(''));
+            });
+            output.push("");
+
+            output.push("Options:");
+
+            return output.join('\n');
+        };
+
+        return Plugin;
+    })();
+
+    var PluginManager = (() => {
+
+        var plugins = [];
+
+        function PluginManager() {}
+
+        PluginManager.prototype.register = (name, cb) => {
+            var options = {};
+            var arguments = [];
+
+            var next = {
+                withOptions: (opts) => {
+                    options  = opts;
+                    return next;
+                },
+                withArguments: (args) => {
+                    arguments = args;
+                    return next;
+                },
+                done: () => {
+                    plugins.push(new Plugin(name, cb, options, arguments));
+                }
+            };
+
+            PluginManager.prototype.execute = (command) => {
+                console.log(command);
+                // plugins.filter(p => p.getName() == command).forEach(p => p.cb());
+            };
+
+            return next;
+        };
+
+        PluginManager.prototype.display = function() {
+            console.log(plugins.forEach(plugin => console.log(plugin.usage())));
+        };
+
+        return PluginManager;
+
+    })();
+
+    var HistoryManager = (() => {
+        const EMPTY = "";
+        var historyList = [];
+        var counter = 0;
+
+        function HistoryManager() {}
+
+        HistoryManager.prototype.push = item => {
+            historyList.push(item);
+            counter = historyList.length - 1;
+        };
+
+        HistoryManager.prototype.forward = () => {
+            counter = Math.min(historyList.length - 1, ++counter);
+
+            return historyList[counter] || EMPTY;
+        };
+
+        HistoryManager.prototype.backward = () => {
+            counter = Math.max(0, --counter);
+
+            return historyList[counter] || EMPTY;
+        };
+
+        HistoryManager.prototype.history = () => {
+            var items = historyList;
+            var total = historyList.length;
+
+            return { items, total, counter };
+        };
+
+        HistoryManager.prototype.count = () => historyList.length;
+        HistoryManager.prototype.clear = () => {
+            historyList = [];
+            counter = historyList.length;
+        }
+
+        return HistoryManager;
+    })();
+
+    var historyManager = new HistoryManager();
+    var pluginManager = new PluginManager();
+
+    pluginManager.register('history', () => {
+        console.log("Nice!")
+    }).withOptions({
+        'force': false
+    }).withArguments([{
+        name: "a",
+        description: "The first fucking argument"
+    }, {
+        name: "Name",
+        description: "The second fucking argument"
+    }]).done();
+    </script>
+</body>
+</html>

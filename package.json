@@ -1,0 +1,34 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run gulp && npm run electron",
+    "gulp": "gulp &",
+    "electron": "electron main.js &"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atom/electron-quick-start.git"
+  },
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/atom/electron-quick-start/issues"
+  },
+  "homepage": "https://github.com/atom/electron-quick-start#readme",
+  "devDependencies": {
+    "browser-sync": "^2.11.0",
+    "commandline-parser": "^0.4.0",
+    "electron-prebuilt": "^0.36.0",
+    "gulp": "^3.9.0",
+    "gulp-sass": "^2.1.1"
+  }
+}
