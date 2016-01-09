@@ -1,6 +1,6 @@
 # Assistant
 
-## Instalation
+## Installation
 
 ```
 git clone https://github.com/RobinMalfait/Assistant.git
