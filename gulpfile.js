@@ -45,4 +45,5 @@ gulp.task('js', function () {
         .pipe(browserSync.stream());
 });;
 
+gulp.task('build', ['css', 'js']);
 gulp.task('default', ['serve', 'watch']);
