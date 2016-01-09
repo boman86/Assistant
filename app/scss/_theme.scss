@@ -1,6 +1,6 @@
 @import "color";
 
-$color-theme: "indigo";
+$color-theme: "red";
 $secondary-color: "pink";
 
 /**
@@ -18,3 +18,4 @@ $bar-background-color: color($color-theme, 700);
 $bar-border-color: color($color-theme, 300);
 
 $card-background: color("grey", 50);
+$input-height: 80px;

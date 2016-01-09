@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>My Personal Assistant</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="app/css/main.css">
+    <link rel="stylesheet" href="dist/css/main.css">
 </head>
 <body>
     <div class="container">
@@ -14,12 +14,7 @@
             </div>
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
         </div>
-        <div class="output">
-            <div class="card">
-                <h3 id="title">Hey there!</h3>
-                <pre id="output">...</pre>
-            </div>
-        </div>
+        <div class="output" id="output"></div>
     </div>
 
     <script>
@@ -27,12 +22,25 @@
     const DOWN = 40;
     const ENTER = 13;
     const input = document.getElementById('input');
-    const exec = require('child_process').exec;
+    const output = document.getElementById('output');
 
-    document.addEventListener('keyup', event => {
+    window.cards = require('./dist/js/modules/cardManager')(output);
+
+    var historyManager = require('./dist/js/modules/HistoryManager');
+    var pluginManager = require('./dist/js/modules/PluginManager');
+
+    document.addEventListener('keydown', event => {
+        var EMPTY = "";
+
         switch (event.keyCode) {
-            case UP: input.value = historyManager.backward(); break;
-            case DOWN: input.value = historyManager.forward(); break;
+            case UP:
+                var previous = historyManager.backward();
+                input.value = previous ? previous.command : EMPTY;
+                break;
+            case DOWN:
+                var next = historyManager.forward();
+                input.value = next ? next.command : EMPTY;
+                break;
         }
     });
 
@@ -45,171 +53,17 @@
     });
 
     var processInput = input => {
+        pluginManager.execute(input);
         historyManager.push(input);
-
-        document.getElementById("title").innerHTML = input;
-        var contents = document.getElementById("output");
-        var res = exec(input, (err, stdout, stderr) => {
-            output.innerHTML = "";
-            if (err) output.innerHTML = err;
-            if (stdout) output.innerHTML = stdout;
-            if (stderr) output.innerHTML = stderr;
-        });
-
-        console.log(res);
-        // pluginManager.execute(input);
     };
 
-    var Plugin = (() => {
-        var me = {};
+    /** Default Plugins */
+    pluginManager.register("History", require('./dist/js/modules/plugins/History')({historyManager}));
+    pluginManager.register("Help", require('./dist/js/modules/plugins/Help')({pluginManager}));
+    pluginManager.register("Screen", require('./dist/js/modules/plugins/Screen'));
 
-        function Plugin(name, cb, options, arguments) {
-            me.name = name;
-            me.cb = cb;
-            me.options = options;
-            me.arguments = arguments;
-        }
-
-        Plugin.prototype.usage = () => {
-            var output = [];
-            output.push("Usage:");
-            output.push([
-                '\t',
-                me.name,
-                ' ',
-                me.options ? "[options] " : " ",
-                me.arguments.map(arg => `<${arg.name}>`).join(' ')
-            ].join(''));
-            output.push("");
-
-            output.push("Arguments:");
-            me.arguments.forEach(arg => {
-                output.push([
-                    '\t',
-                    arg.name,
-                    '\t',
-                    arg.description
-                ].join(''));
-            });
-            output.push("");
-
-            output.push("Options:");
-
-            return output.join('\n');
-        };
-
-        return Plugin;
-    })();
-
-    var PluginManager = (() => {
-
-        var plugins = [];
-
-        function PluginManager() {}
-
-        PluginManager.prototype.register = (name, cb) => {
-            var options = {};
-            var arguments = [];
-
-            var next = {
-                withOptions: (opts) => {
-                    options  = opts;
-                    return next;
-                },
-                withArguments: (args) => {
-                    arguments = args;
-                    return next;
-                },
-                done: () => {
-                    plugins.push(new Plugin(name, cb, options, arguments));
-                }
-            };
-
-            PluginManager.prototype.execute = (command) => {
-                console.log(command);
-                // plugins.filter(p => p.getName() == command).forEach(p => p.cb());
-            };
-
-            return next;
-        };
-
-        PluginManager.prototype.display = function() {
-            console.log(plugins.forEach(plugin => console.log(plugin.usage())));
-        };
-
-        return PluginManager;
-
-    })();
-
-    var HistoryManager = (() => {
-        const EMPTY = "";
-        var Immutable = require('remote').require('immutable');
-        var history = [Immutable.List([])];
-        var historyIndex = 0;
-
-        function HistoryManager() {}
-
-        function operation(fn) {
-            var newVersion = fn(history[history.length - 1]);
-            history.push(newVersion);
-            historyIndex = history.length - 1;
-        }
-
-        HistoryManager.prototype.push = item => {
-            operation(function(data) {
-                return data.push(Immutable.Map({
-                    command: item
-                }));
-            });
-        };
-
-        HistoryManager.prototype.forward = () => {
-            historyIndex = Math.min(history.length - 1, ++historyIndex);
-
-            var last = history[historyIndex].last();
-
-            return last ? last.get('command') : EMPTY;
-        };
-
-        HistoryManager.prototype.backward = () => {
-            var last = history[Math.max(0, historyIndex)].last();
-
-            var x = last ? last.get('command') : EMPTY;
-
-            historyIndex = Math.max(0, --historyIndex);
-
-            return x;
-        };
-
-        HistoryManager.prototype.history = () => {
-            var items = history[history.length - 1].toArray();
-            var total = history[history.length - 1].count();
-
-            return { items, total, counter: historyIndex };
-        };
-
-        HistoryManager.prototype.count = () => history.length;
-        HistoryManager.prototype.clear = () => {
-            history.clear();
-        }
-
-        return HistoryManager;
-    })();
-
-    var historyManager = new HistoryManager();
-    var pluginManager = new PluginManager();
-
-    pluginManager.register('history', () => {
-        console.log("Nice!")
-    }).withOptions({
-        'force': false
-    }).withArguments([{
-        name: "a",
-        description: "The first fucking argument"
-    }, {
-        name: "Name",
-        description: "The second fucking argument"
-    }]).done();
+    /** Print Help Card */
+    pluginManager.execute("help");
     </script>
 </body>
 </html>
