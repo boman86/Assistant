@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 
 var config = {
     src: {
-        css: 'app/scss/*.scss',
+        css: 'app/scss/**/*.scss',
         html: '**/*.html',
         js: 'app/js/**/*.js'
     },
