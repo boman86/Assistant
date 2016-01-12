@@ -71,15 +71,44 @@ h1, h2, h3, h4, h5, h6 {
 
         margin-top: $input-height;
 
-        padding: $padding;
+        padding: ($padding * 1.5) $padding;
     }
 
     .tools {
+        border-top: 1px solid color('grey', 300);
+        background-color: rgba(color('grey', 300), .6);
         position: absolute;
-        right: 10px;
-        bottom: 10px;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        height: ($padding * 1.8);
+        padding: (($padding * 1.8) / 4.5);
 
-        .undo, .redo {
+
+
+        .group {
+            display: inline-block;
+            margin-left: 5px;
+
+            &.right {
+                float: right;
+            }
+
+            button {
+                margin-left: -2px;
+                margin-right: -2px;
+
+                &:first-child {
+                    border-radius: 3px 0 0 3px;
+                }
+
+                &:last-child {
+                    border-radius: 0 3px 3px 0;
+                }
+            }
+        }
+
+        button {
             background-color: color($color-theme, 800);
             border-radius: 3px;
             border: none;
