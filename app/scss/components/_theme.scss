@@ -4,7 +4,7 @@ $secondary-color: "pink";
 /**
  * Global
  */
-$background-color: color("grey", 300);
+$background-color: whitesmoke;
 
 $color: color("grey", 600);
 $font-family: sans-serif;
@@ -15,5 +15,5 @@ $padding: 30px;
 $bar-background-color: color($color-theme, 700);
 $bar-border-color: color($color-theme, 300);
 
-$card-background: color("grey", 50);
+$card-background: white;
 $input-height: 80px;
