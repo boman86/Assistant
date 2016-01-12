@@ -1,6 +1,7 @@
 import Immutable from 'Immutable'
 import execall from 'execall'
 import h from "hyperscript"
+import Event from "./Event"
 
 const Observers = Symbol()
 
@@ -8,6 +9,14 @@ class Robot {
 
     constructor() {
         this[Observers] = Immutable.List([])
+    }
+
+    on(type, callback) {
+        Event.on(type, callback)
+    }
+
+    fire(type, data) {
+        Event.fire(type, data)
     }
 
     h(tag, attrs, children) {
@@ -47,4 +56,4 @@ class Robot {
     }
 }
 
-export default Robot
+module.exports = Robot
