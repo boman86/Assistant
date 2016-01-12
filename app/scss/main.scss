@@ -73,6 +73,33 @@ h1, h2, h3, h4, h5, h6 {
 
         padding: $padding;
     }
+
+    .tools {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+
+        .undo, .redo {
+            background-color: color($color-theme, 800);
+            border-radius: 3px;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            outline: none;
+
+            &:hover, &:active {
+                color: whitesmoke;
+                cursor: pointer;
+                background-color: color($color-theme, 600);
+            }
+
+            &.disabled, &:disabled {
+                background-color: color("grey", 400);
+                color: color("grey", 900);
+                cursor: not-allowed;
+            }
+        }
+    }
 }
 
 .card {

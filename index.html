@@ -14,6 +14,10 @@
             </div>
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
         </div>
+        <div class="tools">
+            <button class="undo" id="undo">Undo</button>
+            <button class="redo" id="redo">Redo</button>
+        </div>
         <div class="output" id="output"></div>
     </div>
 
@@ -23,8 +27,10 @@
     const ENTER = 13;
     const input = document.getElementById('input');
     const output = document.getElementById('output');
+    const undo = document.getElementById('undo');
+    const redo = document.getElementById('redo');
 
-    window.cards = require('./dist/js/modules/cardManager')(output);
+    window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
 
     var historyManager = require('./dist/js/modules/HistoryManager');
     var pluginManager = require('./dist/js/modules/PluginManager');
