@@ -27,10 +27,6 @@ class Robot {
         window.cards.spawn(hObj)
     }
 
-    clearScreen() {
-        window.cards.clear()
-    }
-
     listen(regex, description, cb) {
         this[Observers] = this[Observers].push({
             regex, description, cb
