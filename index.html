@@ -15,8 +15,11 @@
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
         </div>
         <div class="tools">
-            <button class="undo" id="undo">Undo</button>
-            <button class="redo" id="redo">Redo</button>
+            <button id="clear">Clear</button>
+            <div class="group right">
+                <button id="undo">Undo</button>
+                <button id="redo">Redo</button>
+            </div>
         </div>
         <div class="output" id="output"></div>
     </div>
@@ -29,8 +32,14 @@
     const output = document.getElementById('output');
     const undo = document.getElementById('undo');
     const redo = document.getElementById('redo');
+    const clear = document.getElementById('clear');
+
     window.Event = Event = require("./dist/js/modules/Event");
     window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
+
+    clear.addEventListener('click', function() {
+        Event.fire('clear');
+    });
 
     var historyManager = require('./dist/js/modules/HistoryManager');
     var pluginManager = require('./dist/js/modules/PluginManager');
@@ -66,7 +75,7 @@
     /** Default Plugins */
     pluginManager.register("History", require('./dist/js/modules/plugins/History')({historyManager}));
     pluginManager.register("Help", require('./dist/js/modules/plugins/Help')({pluginManager}));
-    pluginManager.register("Screen", require('./dist/js/modules/plugins/Screen'));
+    pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
 
     /** Print Help Card */
     pluginManager.execute("help");
