@@ -1,5 +1,6 @@
 import Immutable from "Immutable"
 import h from "hyperscript"
+import Event from "./Event"
 
 const OUTPUT = Symbol()
 const Cards = Symbol()
@@ -18,6 +19,9 @@ class CardManager {
 
         undoEl.addEventListener('click', e => this.undo())
         redoEl.addEventListener('click', e => this.redo())
+
+        Event.on('history:undo', this.undo)
+        Event.on('history:redo', this.redo)
     }
 
     setCards(cards) {
