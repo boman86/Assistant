@@ -8,6 +8,7 @@ class Event {
     }
 
     on(event, cb) {
+        if ( ! cb) return
         this[Events] = this[Events].set(event, this[Events].get(event, Immutable.List([])).push(Immutable.Map({ cb })))
     }
 
