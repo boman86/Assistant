@@ -20,10 +20,10 @@ class CardManager {
         undoEl.addEventListener('click', e => this.undo())
         redoEl.addEventListener('click', e => this.redo())
 
-        Event.on('history:undo', this.undo)
-        Event.on('history:redo', this.redo)
-        Event.on('clear', this.clear)
-        Event.on('clear:screen', this.clear)
+        Event.on('history:undo', () => this.undo())
+        Event.on('history:redo', () => this.redo())
+        Event.on('clear', () => this.clear())
+        Event.on('clear:screen', () => this.clear())
     }
 
     setCards(cards) {
@@ -53,12 +53,12 @@ class CardManager {
     }
 
     undo() {
-        --this[CardsIndex]
+        this[CardsIndex] = Math.max(0, this[CardsIndex] - 1)
         this.draw()
     }
 
     redo() {
-        ++this[CardsIndex]
+        this[CardsIndex] = Math.max(this[Cards].count() - 1, this[CardsIndex] + 1)
         this.draw()
     }
 }
