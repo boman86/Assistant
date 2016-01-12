@@ -10,9 +10,7 @@ class PluginManager {
     }
 
     register(name, cb) {
-        this[plugins] = this[plugins].push(
-            new Plugin(name, cb)
-        )
+        this[plugins] = this[plugins].push(new Plugin(name, cb))
     }
 
     execute(command) {
