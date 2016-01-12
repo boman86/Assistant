@@ -29,7 +29,7 @@
     const output = document.getElementById('output');
     const undo = document.getElementById('undo');
     const redo = document.getElementById('redo');
-
+    window.Event = Event = require("./dist/js/modules/Event");
     window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
 
     var historyManager = require('./dist/js/modules/HistoryManager');
