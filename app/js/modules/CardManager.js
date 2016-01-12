@@ -22,6 +22,8 @@ class CardManager {
 
         Event.on('history:undo', this.undo)
         Event.on('history:redo', this.redo)
+        Event.on('clear', this.clear)
+        Event.on('clear:screen', this.clear)
     }
 
     setCards(cards) {
