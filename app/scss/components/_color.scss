@@ -329,7 +329,9 @@
         "deep-orange": $deep-orange,
         "brown": $brown,
         "blue-grey": $blue-grey,
-        "grey": $grey
+        "blue-gray": $blue-grey,
+        "grey": $grey,
+        "gray": $grey
 );
 
     @if map_has_key($colors, $color) {
