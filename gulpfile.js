@@ -1,8 +1,6 @@
 var gulp = require('gulp'),
-    browserSync = require('browser-sync').create(),
     sass = require('gulp-sass')
-    babel = require('gulp-babel')
-    concat = require('gulp-concat');
+    babel = require('gulp-babel');
 
 var config = {
     src: {
@@ -16,34 +14,23 @@ var config = {
     }
 };
 
-gulp.task('serve', function() {
-    browserSync.init({
-        server: {
-            baseDir: './'
-        }
-    });
-});
-
-gulp.task('watch', ['css', 'js'], function() {
+gulp.task('watch', ['build'], function() {
     gulp.watch(config.src.css, ['css']);
     gulp.watch(config.src.js, ['js']);
-    gulp.watch(config.src.html).on('change', browserSync.reload);
+    gulp.watch(config.src.html);
 });
 
 gulp.task('css', function() {
     return gulp.src(config.src.css)
         .pipe(sass())
-        .pipe(gulp.dest(config.dest.css))
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest(config.dest.css));
 });
 
 gulp.task('js', function () {
     return gulp.src(config.src.js)
         .pipe(babel())
-        // .pipe(concat('app.js'))
-        .pipe(gulp.dest(config.dest.js))
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest(config.dest.js));
 });;
 
 gulp.task('build', ['css', 'js']);
-gulp.task('default', ['serve', 'watch']);
+gulp.task('default', ['watch']);

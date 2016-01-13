@@ -4,7 +4,7 @@ module.exports = robot => {
     const h = robot.h
     const Immutable = robot.Immutable
 
-    robot.listen(/file (.*)/, "Open a file", res => {
+    robot.listen(/read (.*)/, "Read a file", res => {
 
         var files = Immutable.List(res.matches[0].sub[0].split(/[\s,]+/))
 
