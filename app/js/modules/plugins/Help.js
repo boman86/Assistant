@@ -16,7 +16,7 @@ module.exports = robot => {
         ])
 
         robot.spawnCard(element)
-    }, true)
+    })
 
     robot.listen(/help/, "Show a list of all available commands", res => {
         robot.fire('plugins:fetch_plugin_list')

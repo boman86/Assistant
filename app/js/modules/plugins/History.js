@@ -10,10 +10,10 @@ module.exports = robot => {
         ])
 
         robot.spawnCard(element)
-    }, true)
+    })
 
     robot.listen(/^history$/, "A list of commands you have used previously.", res => {
-        robot.fire('history:fetch_history_list')
+        robot.fire('history:fetch_history_list') // Request the history list
     })
 
     robot.listen(/^clear history$/, "Clear the history list.", res => {
