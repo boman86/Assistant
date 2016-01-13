@@ -37,7 +37,9 @@ class CardManager {
     }
 
     clear() {
-        this.setCards(Immutable.List([]))
+        if (this[Cards].last().count() > 0) { // Only when it has cards
+            this.setCards(Immutable.List([]))
+        }
     }
 
     draw() {
@@ -53,12 +55,12 @@ class CardManager {
     }
 
     undo() {
-        this[CardsIndex] = Math.max(0, this[CardsIndex] - 1)
+        --this[CardsIndex]
         this.draw()
     }
 
     redo() {
-        this[CardsIndex] = Math.max(this[Cards].count() - 1, this[CardsIndex] + 1)
+        ++this[CardsIndex]
         this.draw()
     }
 }

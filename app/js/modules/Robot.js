@@ -9,18 +9,10 @@ class Robot {
 
     constructor() {
         this[Observers] = Immutable.List([])
-    }
-
-    on(type, callback) {
-        Event.on(type, callback)
-    }
-
-    fire(type, data) {
-        Event.fire(type, data)
-    }
-
-    h(tag, attrs, children) {
-        return h(tag, attrs, children)
+        this.Immutable = Immutable
+        this.on = Event.on
+        this.fire = Event.fire
+        this.h = h
     }
 
     spawnCard(hObj) {
