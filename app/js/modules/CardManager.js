@@ -55,12 +55,12 @@ class CardManager {
     }
 
     undo() {
-        --this[CardsIndex]
+        this[CardsIndex] = Math.max(0, this[CardsIndex] - 1)
         this.draw()
     }
 
     redo() {
-        ++this[CardsIndex]
+        this[CardsIndex] = Math.min(this[Cards].count() - 1, this[CardsIndex] + 1)
         this.draw()
     }
 }

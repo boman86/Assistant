@@ -73,9 +73,9 @@
     };
 
     /** Default Plugins */
+    pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
     pluginManager.register("History", require('./dist/js/modules/plugins/History')({historyManager}));
     pluginManager.register("Help", require('./dist/js/modules/plugins/Help')({pluginManager}));
-    pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
     pluginManager.register("File", require('./dist/js/modules/plugins/File'));
 
     /** Print Help Card */
