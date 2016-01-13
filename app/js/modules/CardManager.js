@@ -39,7 +39,11 @@ class CardManager {
     clear() {
         if (this[Cards].last().count() > 0) { // Only when it has cards
             this.setCards(Immutable.List([]))
+        } else {
+            this[CardsIndex] = this[Cards].count() - 1
+            this.draw()
         }
+        Event.fire('notification:success', "I cleared the screen for you, you're welcome ;)")
     }
 
     draw() {

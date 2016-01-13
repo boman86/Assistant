@@ -1,0 +1,40 @@
+.notifications {
+
+    margin-top: -5px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    will-change: transform;
+
+    @include e(notification) {
+
+        padding: 8px 30px;
+        color: white;
+
+        span {
+            margin-right: 10px;
+        }
+
+        @include m(success) {
+            color: color("green", 50);
+            background-color: color("green", 300);
+        }
+
+        @include m(info) {
+            color: color("blue", 50);
+            background-color: color("blue", 300);
+        }
+
+        @include m(error) {
+            color: color("red", 50);
+            background-color: color("red", 300);
+        }
+
+        @include m(warning) {
+            color: color("orange", 50);
+            background-color: color("orange", 300);
+        }
+
+    }
+
+}

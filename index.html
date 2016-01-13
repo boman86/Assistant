@@ -13,6 +13,7 @@
                 <span class="fa fa-terminal"></span>
             </div>
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
+            <div class="notifications" id="notifications"></div>
         </div>
         <div class="tools">
             <button id="clear"><span class="fa fa-trash-o"></span> Clear</button>
@@ -33,6 +34,7 @@
     const undo = document.getElementById('undo');
     const redo = document.getElementById('redo');
     const clear = document.getElementById('clear');
+    const notifications = document.getElementById('notifications');
 
     window.Event = Event = require("./dist/js/modules/Event");
     window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
@@ -43,6 +45,7 @@
 
     var historyManager = require('./dist/js/modules/HistoryManager');
     var pluginManager = require('./dist/js/modules/PluginManager');
+    var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
 
     document.addEventListener('keydown', event => {
         var EMPTY = "";

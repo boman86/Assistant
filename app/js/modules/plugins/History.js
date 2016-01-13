@@ -18,7 +18,5 @@ module.exports = robot => {
 
     robot.listen(/^clear history$/, "Clear the history list.", res => {
         robot.fire('history:clear')
-
-        robot.spawnCard(h('p', 'Cleared the history!'))
     })
 }

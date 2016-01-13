@@ -4,7 +4,10 @@ var gulp = require('gulp'),
 
 var config = {
     src: {
-        css: 'app/scss/**/*.scss',
+        css: {
+            endpoint: 'app/scss/main.scss',
+            files: 'app/scss/**/*.scss'
+        },
         html: '**/*.html',
         js: 'app/js/**/*.js'
     },
@@ -15,13 +18,13 @@ var config = {
 };
 
 gulp.task('watch', ['build'], function() {
-    gulp.watch(config.src.css, ['css']);
+    gulp.watch(config.src.css.files, ['css']);
     gulp.watch(config.src.js, ['js']);
     gulp.watch(config.src.html);
 });
 
 gulp.task('css', function() {
-    return gulp.src(config.src.css)
+    return gulp.src(config.src.css.endpoint)
         .pipe(sass())
         .pipe(gulp.dest(config.dest.css));
 });

@@ -66,6 +66,7 @@ class HistoryManager {
 
     clear() {
         this[history] = this[history].clear()
+        Event.fire('notification:success', 'I cleaned your history, it was kind of messy...')
 
         this.persist()
     }
