@@ -18,6 +18,10 @@ class NotificationManager {
 
         Event.on('notification:previous', () => this.previous())
         Event.on('notification:next', () => this.next())
+
+        Event.on('notification:fetch_notification_list', () => {
+            Event.fire('notification:notification_list', this.history())
+        })
     }
 
     setNotifications(list) {
@@ -49,12 +53,18 @@ class NotificationManager {
         this.draw()
     }
 
+    history() {
+        return {
+            items: this[Notifications],
+            total: this[Notifications].count(),
+            counter: this[NotificationsIndex]
+        }
+    }
+
     notify(msg, type, icon) {
         this.setNotifications(this[Notifications].push(
             h(`.notifications__notification.notifications__notification--${type}`, {}, [
-                h('span', {
-                    className: `fa ${icon}`
-                }),
+                h(`span.fa.${icon}`),
                 h('span', msg)
             ])
         ))

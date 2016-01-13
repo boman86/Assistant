@@ -1,14 +1,14 @@
 import Immutable from 'immutable'
 import Event from './Event'
 
-const history = Symbol()
-const historyIndex = Symbol()
+const History = Symbol()
+const HistoryIndex = Symbol()
 const localStorageKey = "__history"
 
 class HistoryManager {
     constructor() {
-        this[history] = Immutable.List([])
-        this[historyIndex] = 0
+        this[History] = Immutable.List([])
+        this[HistoryIndex] = 0
 
         var json = localStorage.getItem(localStorageKey)
 
@@ -27,45 +27,45 @@ class HistoryManager {
 
         if ( ! item) return
 
-        this[history] = this[history].push(Immutable.Map({ command: item }))
-        this[historyIndex] = this[history].count() - 1
+        this[History] = this[History].push(Immutable.Map({ command: item }))
+        this[HistoryIndex] = this[History].count() - 1
 
         this.persist()
     }
 
     forward() {
-        this[historyIndex] = Math.min(this[history].count(), ++this[historyIndex])
+        this[HistoryIndex] = Math.min(this[History].count(), ++this[HistoryIndex])
 
-        let next = this[history].get(this[historyIndex])
+        let next = this[History].get(this[HistoryIndex])
 
         return next ? next.toJSON() : null
     }
 
     backward() {
-        let previous = this[history].get(Math.max(0, this[historyIndex]))
+        let previous = this[History].get(Math.max(0, this[HistoryIndex]))
 
-        this[historyIndex] = Math.max(0, --this[historyIndex])
+        this[HistoryIndex] = Math.max(0, --this[HistoryIndex])
 
         return previous ? previous.toJSON() : null
     }
 
     history() {
-        let items = this[history].map(e => e.toObject())
-        let total = this[history].count()
+        let items = this[History].map(e => e.toObject())
+        let total = this[History].count()
 
         return {
             items,
             total,
-            counter: this[historyIndex]
+            counter: this[HistoryIndex]
         }
     }
 
     count() {
-        return this[history].count()
+        return this[History].count()
     }
 
     clear() {
-        this[history] = this[history].clear()
+        this[History] = this[History].clear()
         Event.fire('notification:success', 'I cleaned your history, it was kind of messy...')
 
         this.persist()
@@ -76,7 +76,7 @@ class HistoryManager {
     }
 
     toJson() {
-        return JSON.stringify(this[history].toJSON())
+        return JSON.stringify(this[History].toJSON())
     }
 
     fromJson(json) {
@@ -84,8 +84,8 @@ class HistoryManager {
             json = JSON.parse(json)
         }
 
-        this[history] = Immutable.List(json).map(obj => Immutable.Map(obj))
-        this[historyIndex] = this[history].count() - 1
+        this[History] = Immutable.List(json).map(obj => Immutable.Map(obj))
+        this[HistoryIndex] = this[History].count() - 1
     }
 }
 

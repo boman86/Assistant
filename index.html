@@ -80,7 +80,11 @@
     pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
     pluginManager.register("History", require('./dist/js/modules/plugins/History'));
     pluginManager.register("Help", require('./dist/js/modules/plugins/Help'));
+    pluginManager.register("Keyboard", require('./dist/js/modules/plugins/Keyboard'));
+
+    /** Custom Plugins */
     pluginManager.register("File", require('./dist/js/modules/plugins/File'));
+    pluginManager.register("Notification", require('./dist/js/modules/plugins/Notification'));
 
     /** Print Help Card */
     pluginManager.execute("help");
