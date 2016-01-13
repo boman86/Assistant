@@ -1,4 +1,5 @@
 import Immutable from 'immutable'
+import Event from './Event'
 
 const history = Symbol()
 const historyIndex = Symbol()
@@ -14,6 +15,11 @@ class HistoryManager {
         if (json) {
             this.fromJson(json)
         }
+
+        Event.on('history:clear', () => this.clear())
+        Event.on('history:fetch_history_list', () => {
+            Event.fire('history:history_list', this.history())
+        })
     }
 
     push(item) {
