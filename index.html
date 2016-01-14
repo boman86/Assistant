@@ -17,7 +17,14 @@
         </div>
         <div class="tools">
             <button id="clear"><span class="fa fa-trash-o"></span> Clear</button>
-            <button onclick="recordSequence()">Record</button>
+            <button onclick="recordSequence()">
+                <span id="record_idle">
+                    <span class="fa fa-dot-circle-o"></span> Record
+                </span>
+                <span id="record_recording" style="display: none;">
+                    <span class="fa fa-circle recording"></span> Recording...
+                </span>
+            </button>
 
             <div class="group right">
                 <button id="undo"><span class="fa fa-undo"></span> Undo</button>
@@ -38,6 +45,9 @@
     const clear = document.getElementById('clear');
     const notifications = document.getElementById('notifications');
 
+    const record_idle = document.getElementById('record_idle');
+    const record_recording = document.getElementById('record_recording');
+
     window.Event = Event = require("./dist/js/modules/Event");
     window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
 
@@ -51,9 +61,14 @@
     var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
 
     function recordSequence() {
+        record_idle.style.display = "none";
+        record_recording.style.display = "block";
+
         keyboardManager.record(function(sequence) {
             // sequence is an array like ['ctrl+k', 'c']
             alert('You pressed: ' + sequence.join(' '));
+            record_idle.style.display = "block";
+            record_recording.style.display = "none";
         });
     }
 
