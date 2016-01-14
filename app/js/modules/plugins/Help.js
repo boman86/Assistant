@@ -4,14 +4,17 @@ module.exports = robot => {
     robot.on('plugins:plugin_list', list => {
         var element = h('div', {}, [
             h('h3', 'Help'),
-            h('dl', list.map(i => {
-                return h('di', h('dt', i.name), h('dd', i.commands.map(c => {
-                    return h('li', [
-                        h('span', c.name),
-                        h('span', ' - '),
-                        h('span', c.description)
-                    ])
-                }).toArray()))
+            h('dl', {}, list.map(i => {
+                return h('div', {}, [
+                    h('strong', {}, String(i.name)),
+                    h('dd', i.commands.map(c => {
+                        return h('li', [
+                            h('span', String(c.name)),
+                            h('span', ' - '),
+                            h('span', String(c.description))
+                        ])
+                    }).toArray())
+                ])
             }).toArray())
         ])
 
