@@ -1,6 +1,6 @@
 import Immutable from 'Immutable'
 import execall from 'execall'
-import h from "hyperscript"
+import { h } from "virtual-dom"
 import Event from "./Event"
 
 const Observers = Symbol()

@@ -1,10 +1,11 @@
 import Immutable from "Immutable"
-import h from "hyperscript"
+import { h, diff, patch, create } from "virtual-dom"
 import Event from "./Event"
 
 const OUTPUT = Symbol()
 const Cards = Symbol()
 const CardsIndex = Symbol()
+const RootNode = Symbol()
 
 class CardManager {
 
@@ -13,6 +14,10 @@ class CardManager {
         this[Cards] = Immutable.List([])
         this[Cards] = this[Cards].push(Immutable.List([]))
         this[CardsIndex] = this[Cards].count() - 1
+
+        // Ready for some Virtual Dom?
+        this[RootNode] = create(h('div'))
+        this[OUTPUT].appendChild(this[RootNode])
 
         this.undoEl = undoEl
         this.redoEl = redoEl
@@ -47,9 +52,11 @@ class CardManager {
     }
 
     draw() {
-        this[OUTPUT].innerHTML = "";
-        this[Cards].get(this[CardsIndex]).reverse().forEach(c => this[OUTPUT].appendChild(c))
-
+        /** Starting Virtual DOM Magic */
+        let list = h('div', {}, this[Cards].get(this[CardsIndex]).reverse().toArray())
+        let patches = diff(this[RootNode], list)
+        this[RootNode] = patch(this[RootNode], patches)
+        /** Ending Virtual DOM Magic */
 
         var hasUndo = this[CardsIndex] !== 0
         var hasRedo = this[CardsIndex] !== this[Cards].count() - 1

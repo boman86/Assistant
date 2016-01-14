@@ -1,73 +1,54 @@
 import Event from "./Event"
-import h from "hyperscript"
-import Immutable from "Immutable"
+import { h, diff, patch, create } from "virtual-dom"
+import debounce from "debounce"
 
-const Notifications = Symbol()
-const NotificationsIndex = Symbol()
+const Notification = Symbol()
+const RootNode = Symbol()
 
 class NotificationManager {
 
     constructor(outputEl) {
         this[output] = outputEl
-        this.setNotifications(Immutable.List([]))
+        this[Notification] = h('div')
+
+        // Ready for some Virtual Dom?
+        this[RootNode] = create(h('div'))
+        this[output].appendChild(this[RootNode])
 
         Event.on('notification:error', msg => this.error(msg))
         Event.on('notification:info', msg => this.info(msg))
         Event.on('notification:success', msg => this.success(msg))
         Event.on('notification:warning', msg => this.warning(msg))
 
-        Event.on('notification:previous', () => this.previous())
-        Event.on('notification:next', () => this.next())
-
-        Event.on('notification:fetch_notification_list', () => {
-            Event.fire('notification:notification_list', this.history())
-        })
+        this.clearNotification = debounce(this._clearNotification, 5000)
     }
 
-    setNotifications(list) {
-        this[Notifications] = list
-        this[NotificationsIndex] = this[Notifications].count() - 1
+    setNotification(notification) {
+        this[Notification] = notification
+        this.draw()
 
+        this.clearNotification()
+    }
+
+    _clearNotification() {
+        this[Notification] = h()
         this.draw()
     }
 
     draw() {
-        var notification = this[Notifications].get(this[NotificationsIndex])
-
-        if (notification) {
-            this[output].innerHTML = notification.outerHTML
-
-            setTimeout(() => {
-                this[output].innerHTML = ""
-            }, 5000)
-        }
-    }
-
-    previous() {
-        this[NotificationsIndex] = Math.max(0, this[NotificationsIndex] - 1)
-        this.draw()
-    }
-
-    next() {
-        this[NotificationsIndex] = Math.min(this[Notifications].count() - 1, this[NotificationsIndex] + 1)
-        this.draw()
-    }
-
-    history() {
-        return {
-            items: this[Notifications],
-            total: this[Notifications].count(),
-            counter: this[NotificationsIndex]
-        }
+        /** Starting Virtual DOM Magic */
+        let patches = diff(this[RootNode], this[Notification])
+        this[RootNode] = patch(this[RootNode], patches)
+        /** Ending Virtual DOM Magic */
     }
 
     notify(msg, type, icon) {
-        this.setNotifications(this[Notifications].push(
+        this.setNotification(
             h(`.notifications__notification.notifications__notification--${type}`, {}, [
                 h(`span.fa.${icon}`),
                 h('span', msg)
             ])
-        ))
+        )
     }
 
     success(msg) {

@@ -17,6 +17,8 @@
         </div>
         <div class="tools">
             <button id="clear"><span class="fa fa-trash-o"></span> Clear</button>
+            <button onclick="recordSequence()">Record</button>
+
             <div class="group right">
                 <button id="undo"><span class="fa fa-undo"></span> Undo</button>
                 <button id="redo"><span class="fa fa-repeat"></span> Redo</button>
@@ -45,7 +47,15 @@
 
     var historyManager = require('./dist/js/modules/HistoryManager');
     var pluginManager = require('./dist/js/modules/PluginManager');
+    var keyboardManager = require('./dist/js/modules/keyboardManager');
     var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
+
+    function recordSequence() {
+        keyboardManager.record(function(sequence) {
+            // sequence is an array like ['ctrl+k', 'c']
+            alert('You pressed: ' + sequence.join(' '));
+        });
+    }
 
     document.addEventListener('keydown', event => {
         var EMPTY = "";
@@ -75,6 +85,13 @@
         historyManager.push(input);
     };
 
+    keyboardManager.register('ctrl+z', () => {
+        Event.fire('history:undo')
+    })
+    keyboardManager.register('ctrl+r', () => {
+        Event.fire('history:redo')
+    })
+
     /** Default Plugins */
     // pluginManager.loadFrom('dist/js/modules/plugins');
     pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
@@ -84,7 +101,6 @@
 
     /** Custom Plugins */
     pluginManager.register("File", require('./dist/js/modules/plugins/File'));
-    pluginManager.register("Notification", require('./dist/js/modules/plugins/Notification'));
 
     /** Print Help Card */
     pluginManager.execute("help");
