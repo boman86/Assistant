@@ -2,17 +2,15 @@ import Immutable from 'immutable'
 import Event from './Event'
 
 const History = Symbol()
-const Storage = Symbol()
 const HistoryIndex = Symbol()
 const localStorageKey = "__history"
 
 class HistoryManager {
-    constructor(storageMechanism) {
-        this[Storage] = storageMechanism || localStorage
+    constructor() {
         this[History] = Immutable.List([])
         this[HistoryIndex] = 0
 
-        var json = this[Storage].getItem(localStorageKey)
+        var json = localStorage.getItem(localStorageKey)
 
         if (json) {
             this.fromJson(json)
@@ -74,7 +72,7 @@ class HistoryManager {
     }
 
     persist() {
-        this[Storage].setItem(localStorageKey, this.toJson())
+        localStorage.setItem(localStorageKey, this.toJson())
     }
 
     toJson() {
@@ -91,4 +89,4 @@ class HistoryManager {
     }
 }
 
-module.exports = storage => new HistoryManager(storage)
+module.exports = new HistoryManager()

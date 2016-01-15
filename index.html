@@ -51,7 +51,7 @@
     window.Event = Event = require("./dist/js/modules/Event");
     window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
 
-    clear.addEventListener('click', function() {
+    clear.addEventListener('click', () => {
         Event.fire('clear');
     });
 
@@ -64,13 +64,25 @@
         record_idle.style.display = "none";
         record_recording.style.display = "block";
 
-        keyboardManager.record(function(sequence) {
+        keyboardManager.record(sequence => {
             // sequence is an array like ['ctrl+k', 'c']
             alert('You pressed: ' + sequence.join(' '));
             record_idle.style.display = "block";
             record_recording.style.display = "none";
         });
     }
+
+    keyboardManager.register('ctrl+z', () => {
+        Event.fire('history:undo')
+    })
+
+    keyboardManager.register('ctrl+r', () => {
+        Event.fire('history:redo')
+    })
+
+    keyboardManager.register('esc', () => {
+        input.focus()
+    })
 
     document.addEventListener('keydown', event => {
         var EMPTY = "";
@@ -99,13 +111,6 @@
         pluginManager.execute(input);
         historyManager.push(input);
     };
-
-    keyboardManager.register('ctrl+z', () => {
-        Event.fire('history:undo')
-    })
-    keyboardManager.register('ctrl+r', () => {
-        Event.fire('history:redo')
-    })
 
     /** Default Plugins */
     // pluginManager.loadFrom('dist/js/modules/plugins');
