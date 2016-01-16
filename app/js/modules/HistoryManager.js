@@ -40,7 +40,7 @@ class HistoryManager {
     }
 
     backward() {
-        let previous = this[History].get(Math.max(0, this[HistoryIndex]))
+        let previous = this[History].get(this[HistoryIndex])
 
         this[HistoryIndex] = Math.max(0, --this[HistoryIndex])
 

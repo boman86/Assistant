@@ -28,6 +28,33 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
 
+button {
+    &.button {
+        background-color: color($color-theme, 800);
+        border-radius: 3px;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        outline: none;
+
+        span {
+            margin-right: 8px;
+        }
+
+        &:hover, &:active {
+            color: whitesmoke;
+            cursor: pointer;
+            background-color: color($color-theme, 600);
+        }
+
+        &.disabled, &:disabled {
+            background-color: color("grey", 400);
+            color: color("grey", 900);
+            cursor: not-allowed;
+        }
+    }
+}
+
 .container {
     .input {
         width: 100%;
@@ -85,6 +112,9 @@ h1, h2, h3, h4, h5, h6 {
         height: ($padding * 1.8);
         padding: (($padding * 1.8) / 4.5);
 
+        button {
+            @extend button.button;
+        }
 
 
         .group {
@@ -108,31 +138,6 @@ h1, h2, h3, h4, h5, h6 {
                 }
             }
         }
-
-        button {
-            background-color: color($color-theme, 800);
-            border-radius: 3px;
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            outline: none;
-
-            span {
-                margin-right: 8px;
-            }
-
-            &:hover, &:active {
-                color: whitesmoke;
-                cursor: pointer;
-                background-color: color($color-theme, 600);
-            }
-
-            &.disabled, &:disabled {
-                background-color: color("grey", 400);
-                color: color("grey", 900);
-                cursor: not-allowed;
-            }
-        }
     }
 }
 
@@ -151,4 +156,22 @@ h1, h2, h3, h4, h5, h6 {
 
 .recording {
     color: color('red');
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
 }

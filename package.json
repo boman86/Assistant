@@ -24,6 +24,7 @@
     "debounce": "^1.0.0",
     "execall": "^1.0.0",
     "immutable": "^3.7.6",
+    "lorem-ipsum": "^1.0.3",
     "mousetrap": "^1.5.3",
     "virtual-dom": "^2.1.1"
   },
