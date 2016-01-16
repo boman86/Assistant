@@ -17,9 +17,7 @@ class HistoryManager {
         }
 
         Event.on('history:clear', () => this.clear())
-        Event.on('history:fetch_history_list', () => {
-            Event.fire('history:history_list', this.history())
-        })
+        Event.on('history:fetch_history_list', cb => cb(this.history()))
     }
 
     push(item) {

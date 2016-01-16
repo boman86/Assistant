@@ -16,9 +16,7 @@ class KeyboardManager {
             this.fromJson(json)
         }
 
-        Event.on('keyboard:fetch_keyboard_list', () => {
-            Event.fire('keyboard:keyboard_list', this.keyboardBindings())
-        })
+        Event.on('keyboard:fetch_keyboard_list', cb => cb(this.keyboardBindings()))
     }
 
     keyboardBindings () {
@@ -29,6 +27,14 @@ class KeyboardManager {
             items,
             total
         }
+    }
+
+    registerEvent(binding, event) {
+        this[Bindings] = this[Bindings].push(Immutable.Map({ binding, event }))
+
+        Mousetrap.bind(binding, () => Event.fire(event))
+
+        this.persist()
     }
 
     register(binding, cb) {

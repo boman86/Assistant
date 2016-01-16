@@ -10,9 +10,7 @@ class PluginManager {
     constructor() {
         this[plugins] = Immutable.List([])
 
-        Event.on('plugins:fetch_plugin_list', () => {
-            Event.fire('plugins:plugin_list', this.list())
-        })
+        Event.on('plugins:fetch_plugin_list', cb => cb(this.list()))
     }
 
     loadFrom(dir) {

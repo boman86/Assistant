@@ -46,7 +46,10 @@ class NotificationManager {
         this.setNotification(
             h(`.notifications__notification.notifications__notification--${type}`, {}, [
                 h(`span.fa.${icon}`),
-                h('span', msg)
+                h('span', msg),
+                h('button.close', { onclick: () => this._clearNotification() }, [
+                    h('span.fa.fa-times.fa-lg')
+                ])
             ])
         )
     }

@@ -15,6 +15,24 @@
             margin-right: 10px;
         }
 
+        button.close {
+            background-color: transparent;
+            border: none;
+            float: right;
+            cursor: pointer;
+
+            &:hover {
+                span {
+                    color: #333;
+                }
+            }
+
+            span {
+                margin: 0;
+                color: rgb(230, 230, 230);
+            }
+        }
+
         @include m(success) {
             color: color("green", 50);
             background-color: color("green", 300);

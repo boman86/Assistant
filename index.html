@@ -72,13 +72,8 @@
         });
     }
 
-    keyboardManager.register('ctrl+z', () => {
-        Event.fire('history:undo')
-    })
-
-    keyboardManager.register('ctrl+r', () => {
-        Event.fire('history:redo')
-    })
+    keyboardManager.registerEvent('ctrl+z', 'history:undo')
+    keyboardManager.registerEvent('ctrl+r', 'history:redo')
 
     keyboardManager.register('esc', () => {
         input.focus()
