@@ -121,6 +121,8 @@
 
     /** Custom Plugins */
     pluginManager.register("File", require('./dist/js/modules/plugins/File'));
+    pluginManager.register("Battery", require('./dist/js/modules/plugins/Battery'));
+    pluginManager.register("Personal", require('./dist/js/modules/plugins/Personal'));
 
     /** Print Help Card */
     pluginManager.execute("help");
