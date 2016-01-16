@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run gulp build && npm run electron",
     "gulp": "gulp",
+    "update": "git pull && npm install && npm start",
     "electron": "electron main.js"
   },
   "repository": {
