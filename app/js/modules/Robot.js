@@ -21,8 +21,8 @@ class Robot {
         Event.fire(event, data)
     }
 
-    spawnCard(hObj) {
-        window.cards.spawn(hObj)
+    spawnCard(type, data) {
+        window.cards.spawn(type, data)
     }
 
     listen(regex, description, cb) {

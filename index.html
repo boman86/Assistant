@@ -49,7 +49,10 @@
     const record_recording = document.getElementById('record_recording');
 
     window.Event = Event = require("./dist/js/modules/Event");
-    window.cards = require('./dist/js/modules/cardManager')(output, undo, redo);
+    window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo);
+
+    cardManager.registerCard(require("./dist/js/modules/cards/Blank"))
+    cardManager.registerCard(require("./dist/js/modules/cards/Image"))
 
     clear.addEventListener('click', () => {
         Event.fire('clear');

@@ -10,7 +10,7 @@ module.exports = robot => {
                 }).toArray())
             ])
 
-            robot.spawnCard(element)
+            robot.spawnCard('blank', element)
         })
     })
 

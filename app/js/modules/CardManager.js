@@ -4,6 +4,7 @@ import Event from "./Event"
 
 const OUTPUT = Symbol()
 const Cards = Symbol()
+const Types = Symbol()
 const CardsIndex = Symbol()
 const RootNode = Symbol()
 
@@ -14,6 +15,8 @@ class CardManager {
         this[Cards] = Immutable.List([])
         this[Cards] = this[Cards].push(Immutable.List([]))
         this[CardsIndex] = this[Cards].count() - 1
+
+        this[Types] = Immutable.List([])
 
         // Ready for some Virtual Dom?
         this[RootNode] = create(h('div'))
@@ -37,8 +40,14 @@ class CardManager {
         this.draw()
     }
 
-    spawn(hObj) {
-        this.setCards(this[Cards].last().push(h('.card', hObj)))
+    registerCard(card) {
+        card = card(h) // Just give it the "h" object
+        this[Types] = this[Types].push(Immutable.Map({ type: card.type, card }))
+    }
+
+    spawn(type, data) {
+        let card = this[Types].filter(c => c.get('type') == type).first().get('card').cb(data)
+        this.setCards(this[Cards].last().push(card))
     }
 
     clear() {

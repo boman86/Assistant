@@ -29,6 +29,6 @@ module.exports = robot => {
             h('pre', output)
         ])
 
-        robot.spawnCard(el)
+        robot.spawnCard('blank', el)
     })
 }

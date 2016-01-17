@@ -6,6 +6,6 @@ module.exports = robot => {
             h('h3', `The result of ${res.matches[0].sub[0]}`),
             h('pre', `= ${eval(res.matches[0].sub[0])}`)
         ])
-        robot.spawnCard(el)
+        robot.spawnCard('blank', el)
     })
 }

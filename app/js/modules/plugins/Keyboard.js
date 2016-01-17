@@ -13,7 +13,7 @@ module.exports = robot => {
                 }).toArray())
             ])
 
-            robot.spawnCard(card)
+            robot.spawnCard('blank', card)
         })
     })
 }
