@@ -6,6 +6,7 @@ module.exports = robot => {
     }
 
     robot.spawnCard('image', {
+        title: `Images for ${config.username}`,
         images: [
             {title: "image 1", src: "http://d.pr/i/19S6T+"},
             {title: "image 2", src: "http://d.pr/i/19S6T+"}
