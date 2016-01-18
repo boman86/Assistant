@@ -35,7 +35,9 @@ module.exports = robot => {
 
     robot.listen(/^battery level$/, "Show the battery level", res => {
         robot.fire("battery:request", battery => {
-            robot.fire("notification:success", `Battery level at ${Math.round(battery.level * 100)}%`)
+            var msg = `Battery level at ${Math.round(battery.level * 100)}%`
+
+            robot.fire("notification:success", msg)
         })
     })
 }

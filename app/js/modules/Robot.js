@@ -9,8 +9,10 @@ class Robot {
 
     constructor() {
         this[Observers] = Immutable.List([])
-        this.Immutable = Immutable
+
+        this.Event = Event
         this.h = h
+        this.Immutable = Immutable
     }
 
     on(event, cb) {
@@ -23,6 +25,23 @@ class Robot {
 
     spawnCard(type, data) {
         window.cards.spawn(type, data)
+    }
+
+    speak(msg, opts) {
+        msg = new SpeechSynthesisUtterance(msg)
+
+        for (var key in opts) {
+            switch (key) {
+                case "voice":
+                    msg.voice = speechSynthesis.getVoices().filter(v => v.name.toLowerCase() == opts[key].toLowerCase())[0]
+                    break;
+                default:
+                    msg[key] = opts[key]
+                    break;
+            }
+        }
+
+        window.speechSynthesis.speak(msg)
     }
 
     listen(regex, description, cb) {

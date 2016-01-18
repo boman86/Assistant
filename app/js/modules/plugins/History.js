@@ -3,14 +3,12 @@ module.exports = robot => {
 
     robot.listen(/^history$/, "A list of commands you have used previously.", res => {
         robot.fire('history:fetch_history_list', list => {
-            var element = h('div', {}, [
-                h('h3', `History List (${list.total})`),
-                h('ol', {}, list.items.map(i => {
-                    return h('li', i.command)
-                }).toArray())
-            ])
-
-            robot.spawnCard('blank', element)
+            robot.spawnCard('list', {
+                title: `History List (${list.total})`,
+                items: list.items.map((i, index) => {
+                    return `${index + 1}. ${i.command}`
+                }).toArray()
+            })
         })
     })
 

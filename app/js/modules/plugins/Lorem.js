@@ -5,7 +5,6 @@ module.exports = robot => {
     const h = robot.h
 
     robot.listen(/^lorem ?(\d*)?$/, "Lorem ipsum generator", res => {
-
         let config = {
             count: res.matches[0].sub[0] || 1,
             units: 'paragraphs',
@@ -28,7 +27,6 @@ module.exports = robot => {
             h('h3', `Lorem Ipsum (${config.count} paragraph${config.count == 1 ? '' : 's'})`),
             h('pre', output)
         ])
-
         robot.spawnCard('blank', el)
     })
 }

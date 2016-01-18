@@ -48,20 +48,22 @@
     const record_idle = document.getElementById('record_idle');
     const record_recording = document.getElementById('record_recording');
 
+    var historyManager = require('./dist/js/modules/HistoryManager');
+    var pluginManager = require('./dist/js/modules/PluginManager');
+    var keyboardManager = require('./dist/js/modules/keyboardManager');
+    var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
+
     window.Event = Event = require("./dist/js/modules/Event");
     window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo);
 
     cardManager.registerCard(require("./dist/js/modules/cards/Blank"))
     cardManager.registerCard(require("./dist/js/modules/cards/Image"))
+    cardManager.registerCard(require("./dist/js/modules/cards/List"))
+    cardManager.registerCard(require("./dist/js/modules/cards/Empty"))
+    cardManager.registerCard(require("./dist/js/modules/cards/Editor"))
 
-    clear.addEventListener('click', () => {
-        Event.fire('clear');
-    });
-
-    var historyManager = require('./dist/js/modules/HistoryManager');
-    var pluginManager = require('./dist/js/modules/PluginManager');
-    var keyboardManager = require('./dist/js/modules/keyboardManager');
-    var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
+    clear.addEventListener('click', () => Event.fire('clear'));
+    keyboardManager.register('esc', () => input.focus());
 
     function recordSequence() {
         record_idle.style.display = "none";
@@ -77,10 +79,6 @@
 
     keyboardManager.registerEvent('ctrl+z', 'history:undo')
     keyboardManager.registerEvent('ctrl+r', 'history:redo')
-
-    keyboardManager.register('esc', () => {
-        input.focus()
-    })
 
     document.addEventListener('keydown', event => {
         var EMPTY = "";
@@ -98,6 +96,7 @@
     });
 
     input.addEventListener('keyup', event => {
+        // search(event.target.value).forEach(i => console.log(i.name))
         if (event.keyCode == ENTER) {
             var value = event.target.value;
             processInput(value);
@@ -110,6 +109,12 @@
         historyManager.push(input);
     };
 
+    // Fuzzy Search-ish
+    function search(input) {
+      var reg = new RegExp(input.split('').join('\\w*').replace(/\W/, ""), 'i');
+      return pluginManager.list().filter(item => item.name.match(reg)).toArray()
+    }
+
     /** Default Plugins */
     // pluginManager.loadFrom('dist/js/modules/plugins');
     pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
@@ -120,9 +125,10 @@
     /** Custom Plugins */
     pluginManager.register("File", require('./dist/js/modules/plugins/File'));
     pluginManager.register("Battery", require('./dist/js/modules/plugins/Battery'));
-    pluginManager.register("Personal", require('./dist/js/modules/plugins/Personal'));
+    // pluginManager.register("Personal", require('./dist/js/modules/plugins/Personal'));
     pluginManager.register("Math", require('./dist/js/modules/plugins/Math'));
     pluginManager.register("Lorem", require('./dist/js/modules/plugins/Lorem'));
+    pluginManager.register("HackerNews", require('./dist/js/modules/plugins/HackerNews'));
 
     /** Print Help Card */
     pluginManager.execute("help");

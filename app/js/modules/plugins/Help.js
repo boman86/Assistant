@@ -3,23 +3,51 @@ module.exports = robot => {
 
     robot.listen(/help/, "Show a list of all available commands", res => {
         robot.fire('plugins:fetch_plugin_list', list => {
-            var element = h('div', {}, [
-                h('h3', 'Help'),
-                h('dl', {}, list.map(i => {
-                    return h('div', {}, [
-                        h('strong', {}, String(i.name)),
-                        h('dd', i.commands.map(c => {
-                            return h('li', [
-                                h('span', String(c.name)),
-                                h('span', ' - '),
-                                h('span', String(c.description))
-                            ])
-                        }).toArray())
+
+            var children = []
+
+            // Header Row
+            children.push(h('tr.header-row', {}, [
+                h('td', 'Plugin Name'),
+                h('td', 'Action RegEx'),
+                h('td', 'Description')
+            ]))
+
+            // Contents
+            list.forEach(i => {
+                var showed = false
+
+                i.commands.forEach(c => {
+                    children.push(h('tr', {}, [
+                        h('td', {}, [
+                            showed ? null : h('h3', String(i.name))
+                        ]),
+                        h('td', String(c.name)),
+                        h('td', String(c.description)),
+                    ]))
+
+                    showed = true
+                })
+            })
+
+            // Render
+            var element = h('table.table.table-hover', {}, [
+                h('thead', {}, [
+                    h('tr', {}, [
+                        h('th', {}, [
+                            h('h3', 'Help')
+                        ])
                     ])
-                }).toArray())
+                ]),
+                h('tbody', {}, children),
+                h('tfoot', {}, [
+                    h('tr', {}, [
+                        h('td', `${list.count()} plugins installed.`)
+                    ])
+                ])
             ])
 
-            robot.spawnCard('blank', element)
+            robot.spawnCard('empty', element)
         })
     })
 }

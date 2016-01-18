@@ -11,7 +11,7 @@ module.exports = robot => {
         files.forEach(file => {
             fs.readFile(file, 'utf8', (err, contents) => {
                 if ( ! err) {
-                    robot.spawnCard('blank', h('pre', contents))
+                    robot.spawnCard('editor', contents)
                 }
             })
         })
