@@ -17,14 +17,14 @@
         </div>
         <div class="tools">
             <button id="clear"><span class="fa fa-trash-o"></span> Clear</button>
-            <button onclick="recordSequence()">
+            <!-- <button onclick="recordSequence()">
                 <span id="record_idle">
                     <span class="fa fa-dot-circle-o"></span> Record
                 </span>
                 <span id="record_recording" style="display: none;">
                     <span class="fa fa-circle recording"></span> Recording...
                 </span>
-            </button>
+            </button> -->
 
             <div class="group right">
                 <button id="undo"><span class="fa fa-undo"></span> Undo</button>
@@ -35,62 +35,65 @@
     </div>
 
     <script>
-    const UP = 38;
-    const DOWN = 40;
-    const ENTER = 13;
-    const input = document.getElementById('input');
-    const output = document.getElementById('output');
-    const undo = document.getElementById('undo');
-    const redo = document.getElementById('redo');
-    const clear = document.getElementById('clear');
-    const notifications = document.getElementById('notifications');
+    const UP = 38
+    const DOWN = 40
+    const ENTER = 13
+    const ipc = require('electron').ipcRenderer
+    const input = document.getElementById('input')
+    const output = document.getElementById('output')
+    const undo = document.getElementById('undo')
+    const redo = document.getElementById('redo')
+    const clear = document.getElementById('clear')
+    const notifications = document.getElementById('notifications')
 
-    const record_idle = document.getElementById('record_idle');
-    const record_recording = document.getElementById('record_recording');
+    // const record_idle = document.getElementById('record_idle')
+    // const record_recording = document.getElementById('record_recording')
 
-    var historyManager = require('./dist/js/modules/HistoryManager');
-    var pluginManager = require('./dist/js/modules/PluginManager');
-    var keyboardManager = require('./dist/js/modules/keyboardManager');
-    var notificationManager = require('./dist/js/modules/NotificationManager')(notifications);
+    var userConfig;
 
-    window.Event = Event = require("./dist/js/modules/Event");
-    window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo);
+    window.userConfig = userConfig = ipc.sendSync('get-user-config')
+
+    var historyManager = require('./dist/js/modules/HistoryManager')
+    var pluginManager = require('./dist/js/modules/PluginManager')
+    var keyboardManager = require('./dist/js/modules/keyboardManager')
+    var notificationManager = require('./dist/js/modules/NotificationManager')(notifications)
+
+    window.Event = Event = require("./dist/js/modules/Event")
+    window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo)
 
     cardManager.registerCard(require("./dist/js/modules/cards/Blank"))
-    cardManager.registerCard(require("./dist/js/modules/cards/Image"))
     cardManager.registerCard(require("./dist/js/modules/cards/List"))
     cardManager.registerCard(require("./dist/js/modules/cards/Empty"))
-    cardManager.registerCard(require("./dist/js/modules/cards/Editor"))
 
-    clear.addEventListener('click', () => Event.fire('clear'));
-    keyboardManager.register('esc', () => input.focus());
+    clear.addEventListener('click', () => Event.fire('clear'))
+    keyboardManager.register('esc', () => input.focus())
 
-    function recordSequence() {
-        record_idle.style.display = "none";
-        record_recording.style.display = "block";
+    // function recordSequence() {
+    //     record_idle.style.display = "none";
+    //     record_recording.style.display = "block";
 
-        keyboardManager.record(sequence => {
-            // sequence is an array like ['ctrl+k', 'c']
-            alert('You pressed: ' + sequence.join(' '));
-            record_idle.style.display = "block";
-            record_recording.style.display = "none";
-        });
-    }
+    //     keyboardManager.record(sequence => {
+    //         // sequence is an array like ['ctrl+k', 'c']
+    //         alert('You pressed: ' + sequence.join(' '))
+    //         record_idle.style.display = "block"
+    //         record_recording.style.display = "none"
+    //     });
+    // }
 
     keyboardManager.registerEvent('ctrl+z', 'history:undo')
     keyboardManager.registerEvent('ctrl+r', 'history:redo')
 
     document.addEventListener('keydown', event => {
-        var EMPTY = "";
+        var EMPTY = ""
 
         switch (event.keyCode) {
             case UP:
-                var previous = historyManager.backward();
-                input.value = previous ? previous.command : EMPTY;
+                var previous = historyManager.backward()
+                input.value = previous ? previous.command : EMPTY
                 break;
             case DOWN:
-                var next = historyManager.forward();
-                input.value = next ? next.command : EMPTY;
+                var next = historyManager.forward()
+                input.value = next ? next.command : EMPTY
                 break;
         }
     });
@@ -98,40 +101,40 @@
     input.addEventListener('keyup', event => {
         // search(event.target.value).forEach(i => console.log(i.name))
         if (event.keyCode == ENTER) {
-            var value = event.target.value;
-            processInput(value);
-            input.value = "";
+            var value = event.target.value
+            processInput(value)
+            input.value = ""
         }
     });
 
     var processInput = input => {
-        pluginManager.execute(input);
-        historyManager.push(input);
+        pluginManager.execute(input)
+        historyManager.push(input)
     };
 
     // Fuzzy Search-ish
     function search(input) {
-      var reg = new RegExp(input.split('').join('\\w*').replace(/\W/, ""), 'i');
+      var reg = new RegExp(input.split('').join('\\w*').replace(/\W/, ""), 'i')
       return pluginManager.list().filter(item => item.name.match(reg)).toArray()
     }
 
     /** Default Plugins */
     // pluginManager.loadFrom('dist/js/modules/plugins');
-    pluginManager.register("Clear", require('./dist/js/modules/plugins/Clear'));
-    pluginManager.register("History", require('./dist/js/modules/plugins/History'));
-    pluginManager.register("Help", require('./dist/js/modules/plugins/Help'));
-    pluginManager.register("Keyboard", require('./dist/js/modules/plugins/Keyboard'));
+    userConfig.plugins.forEach(p => {
+        pluginManager.register(p.name, require(p.path))
+    })
 
-    /** Custom Plugins */
-    pluginManager.register("File", require('./dist/js/modules/plugins/File'));
-    pluginManager.register("Battery", require('./dist/js/modules/plugins/Battery'));
-    // pluginManager.register("Personal", require('./dist/js/modules/plugins/Personal'));
-    pluginManager.register("Math", require('./dist/js/modules/plugins/Math'));
-    pluginManager.register("Lorem", require('./dist/js/modules/plugins/Lorem'));
-    pluginManager.register("HackerNews", require('./dist/js/modules/plugins/HackerNews'));
+    pluginManager.register("Help", require('./dist/js/modules/plugins/Help'))
+    pluginManager.register("Plugin Control", require('./dist/js/modules/plugins/PluginControl'))
+
+    Event.on('pluginmanager:register-plugin', plugin => {
+        pluginManager.register(plugin.name, require(plugin.path))
+        Event.fire("notification:success", "Succesfully registered plugin!")
+        pluginManager.execute("help")
+    })
 
     /** Print Help Card */
-    pluginManager.execute("help");
+    pluginManager.execute("help")
     </script>
 </body>
 </html>

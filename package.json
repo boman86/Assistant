@@ -1,5 +1,5 @@
 {
-  "name": "MyPersonalAssistans",
+  "name": "MyPersonalAssistant",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
@@ -24,8 +24,8 @@
   "dependencies": {
     "debounce": "^1.0.0",
     "execall": "^1.0.0",
+    "git-clone": "^0.1.0",
     "immutable": "^3.7.6",
-    "lorem-ipsum": "^1.0.3",
     "mousetrap": "^1.5.3",
     "username": "^1.0.1",
     "virtual-dom": "^2.1.1"
@@ -33,7 +33,6 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "electron-prebuilt": "^0.36.0",
-    "expect": "^1.13.4",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.1",
     "gulp-sass": "^2.1.1"

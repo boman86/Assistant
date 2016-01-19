@@ -24,7 +24,7 @@ class Robot {
     }
 
     spawnCard(type, data) {
-        window.cards.spawn(type, data)
+        return window.cards.spawn(type, data)
     }
 
     speak(msg, opts) {
