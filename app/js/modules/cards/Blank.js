@@ -1,3 +1,8 @@
+/**
+ * Blank Card
+ *
+ * contents is rendered directly to a div with class `card`
+ */
 module.exports = h => {
     return {
         type: 'blank',

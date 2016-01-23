@@ -1,0 +1,76 @@
+.card {
+    background-color: $card-background;
+    padding: $padding;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12),
+    0 2px 8px 0 rgba(0, 0, 0, 0.24);
+    margin: 10px 0;
+
+    &:last-of-type {
+        margin-bottom: $padding * 1.8;
+    }
+
+    &:first-of-type {
+        margin-top: 0;
+    }
+
+    @include m(list) {
+        display: block;
+        list-style-type: none;
+        padding: 0;
+        margin: 0.5rem 0 1rem 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+
+        @include e(item) {
+            background-color: #fff;
+            line-height: 1.9rem;
+            padding: 10px 20px;
+            margin: 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+    }
+
+    @include m(images) {
+        .images {
+            @extend .clearfix;
+
+            @media all and (max-width: 1200px) {
+                & {
+                    -webkit-column-count: 4;
+                }
+            }
+
+            @media all and (max-width: 1000px) {
+                & {
+                    -webkit-column-count: 3;
+                }
+            }
+
+            @media all and (max-width: 800px) {
+                & {
+                    -webkit-column-count: 2;
+                }
+            }
+
+            @media all and (max-width: 400px) {
+                & {
+                    -webkit-column-count: 1;
+                }
+            }
+
+            $gap: 10px;
+
+            line-height: 0;
+
+            -webkit-column-count: 5;
+            -webkit-column-gap: $gap;
+
+            img {
+                width: 100%;
+                height: auto;
+                margin: ($gap / 2) 0;
+            }
+        }
+    }
+}

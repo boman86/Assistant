@@ -13,16 +13,12 @@ class PluginManager {
         Event.on('plugins:fetch_plugin_list', cb => cb(this.list()))
     }
 
-    loadFrom(dir) {
-        Immutable.List(fs.readdirSync(dir)).forEach(file => {
-            let name = file.replace('.js', '')
-
-            this.register(name, require(dir + '/' + file))
-        })
-    }
-
     register(name, cb) {
         this[plugins] = this[plugins].push(new Plugin(name, cb))
+    }
+
+    remove(name) {
+        this[plugins] = this[plugins].filter(p => p.name != name)
     }
 
     execute(command) {

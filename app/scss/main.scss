@@ -3,6 +3,8 @@
 @import "components/theme";
 @import "components/notifications";
 @import "components/table";
+@import "components/card";
+@import "components/button";
 
 html {
     overflow: hidden;
@@ -27,33 +29,6 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
-}
-
-button {
-    &.button {
-        background-color: color($color-theme, 800);
-        border-radius: 3px;
-        border: none;
-        color: white;
-        padding: 8px 20px;
-        outline: none;
-
-        span {
-            margin-right: 8px;
-        }
-
-        &:hover, &:active {
-            color: whitesmoke;
-            cursor: pointer;
-            background-color: color($color-theme, 600);
-        }
-
-        &.disabled, &:disabled {
-            background-color: color("grey", 400);
-            color: color("grey", 900);
-            cursor: not-allowed;
-        }
-    }
 }
 
 .container {
@@ -142,40 +117,6 @@ button {
     }
 }
 
-.card {
-    background-color: $card-background;
-    padding: $padding;
-    border-radius: 3px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12),
-                0 2px 8px 0 rgba(0, 0, 0, 0.24);
-    margin: 10px 0;
-
-    &:last-of-type {
-        margin-bottom: $padding * 1.8;
-    }
-
-    &:first-of-type {
-        margin-top: 0;
-    }
-
-    @include m(list) {
-        display: block;
-        list-style-type: none;
-        padding: 0;
-        margin: 0.5rem 0 1rem 0;
-        border: 1px solid #e0e0e0;
-        border-radius: 2px;
-
-        @include e(item) {
-            background-color: #fff;
-            line-height: 1.5rem;
-            padding: 10px 20px;
-            margin: 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-    }
-}
-
 .recording {
     color: color('red');
 }
@@ -196,4 +137,12 @@ pre {
 
 .left {
     float: left;
+}
+
+.muted {
+    color: color('grey', 500)
+}
+
+.breathing {
+    margin: 0 8px;
 }

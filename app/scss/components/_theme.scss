@@ -16,3 +16,45 @@ $bar-border-color: color($color-theme, 300);
 
 $card-background: white;
 $input-height: 80px;
+
+.text-theme {
+    color: color($color-theme)
+}
+
+@each $color, $shades in $colors {
+    @each $tint, $value in $shades {
+        .text-#{$color}-#{$tint} {
+            color: color($color, $tint);
+        }
+
+        .text-#{$color} {
+            color: color($color);
+        }
+
+        .text-theme-#{$tint} {
+            color: color($color-theme, $tint)
+        }
+    }
+
+    button {
+        &.button {
+            @include m(#{$color}) {
+                background-color: color($color, 800);
+
+                &:focus,
+                &:hover {
+                    background-color: color($color, 600);
+                }
+            }
+
+            @include m(theme) {
+                background-color: color($color-theme, 800);
+
+                &:focus,
+                &:hover {
+                    background-color: color($color-theme, 600);
+                }
+            }
+        }
+    }
+}

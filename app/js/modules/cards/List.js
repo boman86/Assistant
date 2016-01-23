@@ -1,3 +1,12 @@
+/**
+ * List Card
+ *
+ * data:
+ * {
+ *   title: String, // Optional
+ *   items: []      // Required to be an array
+ * }
+ */
 module.exports = h => {
     return {
         type: 'list',
@@ -10,12 +19,10 @@ module.exports = h => {
             let items = []
 
             for (var i = 0; i < data.items.length; i++) {
-                var item = data.items[i];
+                var item = data.items[i]
 
-                items.push(h('li.card--list__item', {}, [
-                    h('span', item)
-                ]))
-            };
+                items.push(h('li.card--list__item', {}, [h('span', item)]))
+            }
 
             children.push(h('ul.card--list', {}, items))
 

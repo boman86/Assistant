@@ -1,15 +1,17 @@
 import Robot from './Robot'
 
+const robot = new Robot()
+
 class Plugin {
     constructor(name, cb) {
         this.name = name
-        this.robot = new Robot()
-        cb(this.robot)
-        this.commands = this.robot.commands()
+        robot.registerPlugin(this)
+        cb(robot)
+        this.commands = robot.commands(this)
     }
 
     execute(command) {
-        this.robot.test(command)
+        robot.test(this, command)
     }
 }
 

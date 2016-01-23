@@ -3,6 +3,7 @@ import electron, { ipcMain as ipc } from "electron"
 import username from "username"
 import Immutable from "immutable"
 import { exec } from "child_process"
+import Utilities from "./Utilities"
 
 const app = electron.app
 
@@ -29,6 +30,19 @@ class Config {
         ipc.on('check-plugin-exists', (event, githubVendorPackage) => {
             event.returnValue = Immutable.List(this[UserConfig].plugins).filter(p => p.github == githubVendorPackage).count() > 0
         })
+
+        ipc.on('remove-plugin', (event, githubVendorPackage) => {
+            let plugin = Immutable.List(this[UserConfig].plugins).filter(p => p.github == githubVendorPackage).first()
+
+            if (plugin) {
+                Utilities.rmdir(plugin.path)
+                this[UserConfig].plugins = Immutable.List(this[UserConfig].plugins).filter(p => p.github != githubVendorPackage).toArray()
+                this.persist()
+                event.returnValue = true
+            } else {
+                event.returnValue = false
+            }
+        })
     }
 
     addPlugin(plugin, cb) {
@@ -36,7 +50,7 @@ class Config {
 
         let path = plugin.path.replace(/(\s)/, "\\ ")
 
-        exec(`cd ${path} && npm install && npm build`, (err, stdout, stderr) => {
+        exec(`cd ${path} && npm install --production`, (err, stdout, stderr) => {
             cb(err || stderr)
         })
 
@@ -51,7 +65,7 @@ class Config {
 
                 clearInterval(fileInterval)
             }
-        }, 100)
+        }, 200)
     }
 
     defaultConfig() {

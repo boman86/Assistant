@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
-    sass = require('gulp-sass')
+    sass = require('gulp-sass'),
+    csso = require('gulp-csso'),
     babel = require('gulp-babel');
 
 var config = {
@@ -26,6 +27,7 @@ gulp.task('watch', ['build'], function() {
 gulp.task('css', function() {
     return gulp.src(config.src.css.endpoint)
         .pipe(sass())
+        .pipe(csso())
         .pipe(gulp.dest(config.dest.css));
 });
 

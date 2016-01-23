@@ -41,7 +41,7 @@ class CardManager {
     }
 
     registerCard(card) {
-        card = card(h) // Just give it the "h" object
+        card = card(h, Immutable) // Give h & Immutable
         this[Types] = this[Types].push(Immutable.Map({ type: card.type, card }))
     }
 

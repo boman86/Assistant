@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Personal Assistant</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="dist/css/main.css">
@@ -16,7 +17,7 @@
             <div class="notifications" id="notifications"></div>
         </div>
         <div class="tools">
-            <button id="clear"><span class="fa fa-trash-o"></span> Clear</button>
+            <button class="button button--theme" id="clear"><span class="fa fa-trash-o"></span> Clear</button>
             <!-- <button onclick="recordSequence()">
                 <span id="record_idle">
                     <span class="fa fa-dot-circle-o"></span> Record
@@ -27,8 +28,8 @@
             </button> -->
 
             <div class="group right">
-                <button id="undo"><span class="fa fa-undo"></span> Undo</button>
-                <button id="redo"><span class="fa fa-repeat"></span> Redo</button>
+                <button class="button button--theme" id="undo"><span class="fa fa-undo"></span> Undo</button>
+                <button class="button button--theme" id="redo"><span class="fa fa-repeat"></span> Redo</button>
             </div>
         </div>
         <div class="output" id="output"></div>
@@ -62,8 +63,10 @@
     window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo)
 
     cardManager.registerCard(require("./dist/js/modules/cards/Blank"))
-    cardManager.registerCard(require("./dist/js/modules/cards/List"))
     cardManager.registerCard(require("./dist/js/modules/cards/Empty"))
+    cardManager.registerCard(require("./dist/js/modules/cards/Images"))
+    cardManager.registerCard(require("./dist/js/modules/cards/List"))
+    cardManager.registerCard(require("./dist/js/modules/cards/Table"))
 
     clear.addEventListener('click', () => Event.fire('clear'))
     keyboardManager.register('esc', () => input.focus())
@@ -121,16 +124,24 @@
     /** Default Plugins */
     // pluginManager.loadFrom('dist/js/modules/plugins');
     userConfig.plugins.forEach(p => {
-        pluginManager.register(p.name, require(p.path))
+        try {
+            pluginManager.register(p.name, require(p.path))
+        } catch(e) {
+            Event.fire("notification:error", `Could not load plugin ${p.name}`)
+        }
     })
 
     pluginManager.register("Help", require('./dist/js/modules/plugins/Help'))
     pluginManager.register("Plugin Control", require('./dist/js/modules/plugins/PluginControl'))
 
     Event.on('pluginmanager:register-plugin', plugin => {
-        pluginManager.register(plugin.name, require(plugin.path))
-        Event.fire("notification:success", "Succesfully registered plugin!")
-        pluginManager.execute("help")
+        try {
+            pluginManager.register(plugin.name, require(plugin.path))
+            Event.fire("notification:success", "Succesfully registered plugin!")
+            pluginManager.execute("help")
+        } catch(e) {
+            Event.fire("notification:error", `Could not load plugin ${plugin.name}`)
+        }
     })
 
     /** Print Help Card */

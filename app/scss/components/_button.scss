@@ -1,0 +1,28 @@
+button {
+
+    border-radius: 3px;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    outline: none;
+
+    span {
+        margin-right: 8px;
+    }
+
+    &.close {
+        padding: 0;
+    }
+
+    &:hover, &:active {
+        color: whitesmoke;
+        cursor: pointer;
+    }
+
+    &.disabled, &:disabled {
+        background-color: color("grey", 400) !important;
+        color: color("grey", 900);
+        cursor: not-allowed;
+    }
+
+}
