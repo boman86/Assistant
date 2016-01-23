@@ -86,17 +86,19 @@
     keyboardManager.registerEvent('ctrl+z', 'history:undo')
     keyboardManager.registerEvent('ctrl+r', 'history:redo')
 
-    document.addEventListener('keydown', event => {
+    input.addEventListener('keydown', event => {
         var EMPTY = ""
 
         switch (event.keyCode) {
             case UP:
                 var previous = historyManager.backward()
                 input.value = previous ? previous.command : EMPTY
+                setTimeout(() => input.select())
                 break;
             case DOWN:
                 var next = historyManager.forward()
                 input.value = next ? next.command : EMPTY
+                setTimeout(() => input.select())
                 break;
         }
     });

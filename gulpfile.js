@@ -1,6 +1,8 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
     csso = require('gulp-csso'),
+    plumber = require('gulp-plumber'),
+    gutil = require('gulp-util'),
     babel = require('gulp-babel');
 
 var config = {
@@ -18,6 +20,12 @@ var config = {
     }
 };
 
+var onError = function (err) {
+  gutil.beep();
+  gutil.log(err);
+  this.emit('end');
+}
+
 gulp.task('watch', ['build'], function() {
     gulp.watch(config.src.css.files, ['css']);
     gulp.watch(config.src.js, ['js']);
@@ -26,6 +34,9 @@ gulp.task('watch', ['build'], function() {
 
 gulp.task('css', function() {
     return gulp.src(config.src.css.endpoint)
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(sass())
         .pipe(csso())
         .pipe(gulp.dest(config.dest.css));
@@ -33,6 +44,9 @@ gulp.task('css', function() {
 
 gulp.task('js', function () {
     return gulp.src(config.src.js)
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(babel())
         .pipe(gulp.dest(config.dest.js));
 });;
