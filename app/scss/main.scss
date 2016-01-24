@@ -87,6 +87,7 @@ h1, h2, h3, h4, h5, h6 {
         bottom: 0;
         height: ($padding * 1.8);
         padding: (($padding * 1.8) / 4.5);
+        z-index: 99999;
 
         button {
             @extend button.button;
