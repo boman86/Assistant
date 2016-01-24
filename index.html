@@ -136,6 +136,10 @@
 
     /** Print Help Card */
     pluginManager.execute("help")
+
+    setTimeout(() => {
+        ipc.send('show-main-windows')
+    }, 1)
     </script>
 </body>
 </html>
