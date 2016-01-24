@@ -21,9 +21,7 @@ class Config {
 
         ipc.on('save-plugin', (event, plugin) => {
             this.addPlugin(plugin, err => {
-                if ( ! err) {
-                    event.returnValue = plugin
-                }
+                event.sender.send('saved-plugin', err)
             })
         })
 
@@ -38,7 +36,7 @@ class Config {
                 Utilities.rmdir(plugin.path)
                 this[UserConfig].plugins = Immutable.List(this[UserConfig].plugins).filter(p => p.github != githubVendorPackage).toArray()
                 this.persist()
-                event.returnValue = true
+                event.returnValue = plugin
             } else {
                 event.returnValue = false
             }

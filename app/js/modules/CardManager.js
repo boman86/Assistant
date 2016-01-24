@@ -47,7 +47,7 @@ class CardManager {
 
     spawn(type, data) {
         let card = this[Types].filter(c => c.get('type') == type).first().get('card').cb(data)
-        this.setCards(this[Cards].last().push(card))
+        this.setCards(this[Cards].last().push(h('.c', {}, card)))
 
         return card
     }

@@ -46,7 +46,7 @@ class KeyboardManager {
     }
 
     persist() {
-        localStorage.setItem(localStorageKey, this.toJson())
+        // localStorage.setItem(localStorageKey, this.toJson())
     }
 
     toJson() {

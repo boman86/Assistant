@@ -93,12 +93,10 @@
             case UP:
                 var previous = historyManager.backward()
                 input.value = previous ? previous.command : EMPTY
-                setTimeout(() => input.select())
                 break;
             case DOWN:
                 var next = historyManager.forward()
                 input.value = next ? next.command : EMPTY
-                setTimeout(() => input.select())
                 break;
         }
     });
@@ -135,16 +133,6 @@
 
     pluginManager.register("Help", require('./dist/js/modules/plugins/Help'))
     pluginManager.register("Plugin Control", require('./dist/js/modules/plugins/PluginControl'))
-
-    Event.on('pluginmanager:register-plugin', plugin => {
-        try {
-            pluginManager.register(plugin.name, require(plugin.path))
-            Event.fire("notification:success", "Succesfully registered plugin!")
-            pluginManager.execute("help")
-        } catch(e) {
-            Event.fire("notification:error", `Could not load plugin ${plugin.name}`)
-        }
-    })
 
     /** Print Help Card */
     pluginManager.execute("help")

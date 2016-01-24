@@ -2,8 +2,12 @@ import fs from "fs"
 
 class Utilities {
 
-    constructor() {
+    async(fn, done) {
+        setTimeout(() => {
+            fn()
 
+            if (done) this.async(done)
+        }, 0)
     }
 
     rmdir(path, done) {

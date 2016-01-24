@@ -23,6 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "debounce": "^1.0.0",
+    "electron-window-state": "^2.0.0",
     "git-clone": "^0.1.0",
     "immutable": "^3.7.6",
     "mousetrap": "^1.5.3",

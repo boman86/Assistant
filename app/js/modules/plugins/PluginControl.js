@@ -8,6 +8,13 @@ class PluginControlManager {
         this.robot = robot
     }
 
+    async(fn, done) {
+        setTimeout(() => {
+            fn()
+            if (done) done()
+        }, 0)
+    }
+
     install(github) {
         let directory = app.getPath("userData") + "/plugins"
         let filename = +new Date()
@@ -17,8 +24,8 @@ class PluginControlManager {
         let exists = ipc.sendSync('check-plugin-exists', github)
 
         if ( ! exists) {
-            setTimeout(() => {
-                this.robot.fire("notification:info", "Starting to download plugin...")
+            this.robot.fire("notification:info", "Starting to download plugin...")
+            this.async(() => {
                 clone(repo, path, (err, result) => {
                     if (err) {
                         this.robot.fire('notification:error', "Something went wrong with the installation...")
@@ -37,9 +44,13 @@ class PluginControlManager {
 
                         this.robot.fire('notification:info', `Installing ${plugin.name} plugin...`)
 
-                        let savedPlugin = ipc.sendSync('save-plugin', plugin)
+                        ipc.send('save-plugin', plugin)
 
-                        this.robot.fire('pluginmanager:register-plugin', savedPlugin)
+                        ipc.on('saved-plugin', (event, err) => {
+                            if ( ! err) {
+                                this.robot.fire('plugins:register-plugin', plugin)
+                            }
+                        })
                     }
                 })
             })
@@ -50,9 +61,10 @@ class PluginControlManager {
 
     uninstall(github) {
         if (ipc.sendSync('check-plugin-exists', github)) {
-            var removed = ipc.sendSync('remove-plugin', github)
+            var plugin = ipc.sendSync('remove-plugin', github)
 
-            if (removed) {
+            if (plugin) {
+                this.robot.fire('plugins:remove_plugin', plugin)
                 this.robot.fire("notification:success", `Removed ${github}`)
             } else {
                 this.robot.fire("notification:error", `Could not remove ${github}`)
@@ -80,24 +92,19 @@ module.exports = robot => {
                     items: Immutable.List(data).map(p => {
                         let installed = ipc.sendSync('check-plugin-exists', p.full_name)
                         return h('span', {}, [
-                            installed ? h('button.button.button--red.right', {
+                            installed
+                            ? h('button.button.button--red.right', {
                                 onclick: (e) => {
                                     manager.uninstall(p.full_name)
                                 }
-                            }, [
-                                h('span.fa.fa-trash-o'),
-                                "Remove"
-                            ]) : h('button.button--theme.right', {
+                            }, [h('span.fa.fa-trash-o'), "Remove"])
+                            : h('button.button--theme.right', {
                                 disabled: installed,
                                 onclick: (e) => {
                                     manager.install(p.full_name)
                                 }
-                            }, [
-                                h('span.fa.fa-download'),
-                                'Install'
-                            ]),
-                            p.name,
-                            h('span.muted.right.breathing', `Version: ${p.version}`)
+                            }, [h('span.fa.fa-download'), 'Install']),
+                            p.name
                         ])
                     }).toArray()
                 })
