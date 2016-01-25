@@ -23,40 +23,39 @@ class PluginControlManager {
         let repo = `https://github.com/${github}.git`
         let exists = ipc.sendSync('check-plugin-exists', github)
 
-        if ( ! exists) {
-            this.robot.fire("notification:info", "Starting to download plugin...")
-            this.async(() => {
-                clone(repo, path, (err, result) => {
-                    if (err) {
-                        this.robot.fire('notification:error', "Something went wrong with the installation...")
-                    } else {
-                        this.robot.fire('notification:info', "Downloaded plugin...")
-
-                        var packageInfo = JSON.parse(fs.readFileSync(`${path}/package.json`, 'utf8'))
-
-                        var plugin = {
-                            github,
-                            installedAt: +new Date(),
-                            name: github.split('/')[1].replace('Plugin-', ''),
-                            path,
-                            version: packageInfo.version
-                        }
-
-                        this.robot.fire('notification:info', `Installing ${plugin.name} plugin...`)
-
-                        ipc.send('save-plugin', plugin)
-
-                        ipc.on('saved-plugin', (event, err) => {
-                            if ( ! err) {
-                                this.robot.fire('plugins:register-plugin', plugin)
-                            }
-                        })
-                    }
-                })
-            })
-        } else {
+        if (exists) {
             Event.fire('notification:info', "Plugin already installed!")
+            return
         }
+
+        this.robot.fire("notification:info", "Starting to download plugin...")
+        this.async(() => {
+            clone(repo, path, (err, result) => {
+                if (err) {
+                    this.robot.fire('notification:error', "Something went wrong with the installation...")
+                } else {
+                    this.robot.fire('notification:info', "Downloaded plugin...")
+
+                    var packageInfo = JSON.parse(fs.readFileSync(`${path}/package.json`, 'utf8'))
+
+                    var plugin = {
+                        github,
+                        installedAt: +new Date(),
+                        name: github.split('/')[1].replace('Plugin-', ''),
+                        path,
+                        version: packageInfo.version
+                    }
+
+                    this.robot.fire('notification:info', `Installing ${plugin.name} plugin...`)
+
+                    ipc.send('save-plugin', plugin)
+
+                    ipc.on('saved-plugin', (event, err) => {
+                        if ( ! err) this.robot.fire('plugins:register_plugin', plugin)
+                    })
+                }
+            })
+        })
     }
 
     uninstall(github) {
@@ -80,6 +79,15 @@ module.exports = robot => {
     const Immutable = robot.Immutable
     const h = robot.h
     const manager = new PluginControlManager(robot)
+
+    robot.listen(/^test$/, "List of installed plugins", res => {
+        robot.fire('plugins:fetch_plugin_list', list => {
+            robot.spawnCard('list', {
+                title: 'Installed Plugins',
+                items: list.map(p => p.name).toArray()
+            })
+        })
+    })
 
     robot.listen(/^plugins? list online$/, "List of online plugins", res => {
         let base = "https://api.github.com"

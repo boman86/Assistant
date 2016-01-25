@@ -33,8 +33,7 @@ class Robot {
     }
 
     fetchJson(url) {
-        return fetch(url)
-                .then(res => res.json())
+        return fetch(url).then(res => res.json())
     }
 
     on(event, cb) {
@@ -51,6 +50,41 @@ class Robot {
 
     setVoice(voice) {
         this.voice = voice
+    }
+
+    userSaid(str, s) {
+		return str.indexOf(s) > -1;
+	}
+
+    hear(text, cb) {
+        console.log("test")
+        var confidenceThreshold = 0.3
+        var recognition = new webkitSpeechRecognition()
+
+        if (typeof text === "string") {
+            text = [text]
+        }
+
+        recognition.continuous = true
+		recognition.interimResults = false
+		recognition.lang = 'en'
+
+        recognition.onresult = event => {
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    if (parseFloat(event.results[i][0].confidence) >= parseFloat(confidenceThreshold)) {
+                        var str = event.results[i][0].transcript;
+                        for (var i = 0; i < text.length; i++) {
+                            if (this.userSaid(str, text[i])) {
+                                cb(str)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        recognition.start()
     }
 
     speak(msg, opts) {
@@ -116,4 +150,4 @@ class Robot {
     }
 }
 
-module.exports = Robot
+module.exports = new Robot()

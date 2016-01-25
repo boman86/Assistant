@@ -1,6 +1,4 @@
-import Robot from './Robot'
-
-const robot = new Robot()
+import robot from './Robot'
 
 class Plugin {
     constructor(name, cb) {
