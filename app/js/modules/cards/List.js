@@ -26,7 +26,7 @@ module.exports = h => {
 
             children.push(h('ul.card--list', {}, items))
 
-            return h('ul.card', children)
+            return h('ul.card.item', children)
         }
     }
 }

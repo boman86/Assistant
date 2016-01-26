@@ -7,7 +7,7 @@ module.exports = h => {
     return {
         type: 'empty',
         cb: contents => {
-            return h('div', contents)
+            return h('div.item', contents)
         }
     }
 }

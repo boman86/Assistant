@@ -47,7 +47,7 @@ module.exports = (h, Immutable) => {
                 )
             }
 
-            return h('table.table.table-hover', {}, children)
+            return h('table.table.table-hover.item', {}, children)
         }
     }
 }

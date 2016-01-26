@@ -28,7 +28,7 @@ module.exports = (h, Immutable) => {
                 })).toArray()
             ))
 
-            return h('.card.card--images', children)
+            return h('.card.card--images.item', children)
         }
     }
 }

@@ -1,6 +1,6 @@
 module.exports = robot => {
     const h = robot.h
-
+    
     robot.listen(/help/, "Show a list of all available commands", res => {
         robot.fire('plugins:fetch_plugin_list', list => {
 

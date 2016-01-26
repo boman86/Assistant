@@ -1,9 +1,4 @@
-.card {
-    background-color: $card-background;
-    padding: $padding;
-    border-radius: 3px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12),
-                0 2px 8px 0 rgba(0, 0, 0, 0.24);
+.item {
     margin: 10px 0;
 
     &:last-of-type {
@@ -13,6 +8,14 @@
     &:first-of-type {
         margin-top: 0;
     }
+}
+
+.card {
+    background-color: $card-background;
+    padding: $padding;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12),
+                0 2px 8px 0 rgba(0, 0, 0, 0.24);
 
     @include m(list) {
         display: block;

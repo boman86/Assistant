@@ -2,6 +2,7 @@ import Immutable from 'Immutable'
 import execall from 'execall'
 import { h } from "virtual-dom"
 import Event from "./Event"
+import { v4 as uuid } from "uuid"
 
 const Observers = Symbol()
 
@@ -44,8 +45,19 @@ class Robot {
         Event.fire(event, data)
     }
 
+    spawn(component) {
+        let id = uuid()
+        let comp = new component(this, id)
+
+        return window.cards.spawn('blank', comp.render(), id)
+    }
+
     spawnCard(type, data) {
-        return window.cards.spawn(type, data)
+        window.cards.spawn(type, data)
+    }
+
+    update(id, data) {
+        window.cards.update(id, data)
     }
 
     setVoice(voice) {
@@ -53,11 +65,10 @@ class Robot {
     }
 
     userSaid(str, s) {
-		return str.indexOf(s) > -1;
+		return str.toLowerCase().indexOf(s.toLowerCase()) > -1;
 	}
 
     hear(text, cb) {
-        console.log("test")
         var confidenceThreshold = 0.3
         var recognition = new webkitSpeechRecognition()
 
@@ -66,8 +77,7 @@ class Robot {
         }
 
         recognition.continuous = true
-		recognition.interimResults = false
-		recognition.lang = 'en'
+		recognition.interimResults = true
 
         recognition.onresult = event => {
             for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -143,7 +153,7 @@ class Robot {
             this.voices = speechSynthesis.getVoices().filter(s => s.lang == "en-US" && s.localService == true)
 
             if (this.voices.length > 0){
-                this.voice = this.voices[0]
+                this.voice = Immutable.List(this.voices).filter(v => v.name.toLowerCase() == "samantha").first()
                 clearInterval(voicesInterval)
             }
         }, 100)
