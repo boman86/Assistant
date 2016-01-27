@@ -44,13 +44,27 @@
     const UP = 38
     const DOWN = 40
     const ENTER = 13
-    const ipc = require('electron').ipcRenderer
+    const electron = require('electron')
+    const shell = electron.shell
+    const ipc = electron.ipcRenderer
     const input = document.getElementById('input')
     const output = document.getElementById('output')
     const undo = document.getElementById('undo')
     const redo = document.getElementById('redo')
     const clear = document.getElementById('clear')
     const notifications = document.getElementById('notifications')
+
+    document.addEventListener('click', e => {
+        for(var i = 0; i < e.path.length; i++) {
+            var item = e.path[i]
+
+            if (item.localName == "a") {
+                e.preventDefault()
+                shell.openExternal(item.href)
+                break;
+            }
+        }
+    })
 
     // const record_idle = document.getElementById('record_idle')
     // const record_recording = document.getElementById('record_recording')
