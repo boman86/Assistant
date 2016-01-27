@@ -10,6 +10,7 @@ class PluginManager {
     constructor() {
         this[plugins] = Immutable.List([])
 
+        Event.on("plugins:execute", command => this.execute(command))
         Event.on('plugins:fetch_plugin_list', cb => cb(this.list()))
         Event.on('plugins:remove_plugin', plugin => this.remove(plugin.name))
         Event.on('plugins:register_plugin', plugin => {

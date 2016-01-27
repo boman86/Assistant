@@ -1,8 +1,8 @@
 import Immutable from 'Immutable'
-import execall from 'execall'
 import { h } from "virtual-dom"
 import Event from "./Event"
 import { v4 as uuid } from "uuid"
+import SpeechRecognition from "./SpeechRecognition"
 
 const Observers = Symbol()
 
@@ -45,11 +45,11 @@ class Robot {
         Event.fire(event, data)
     }
 
-    spawn(component) {
+    spawn(component, type = "blank") {
         let id = uuid()
         let comp = new component(this, id)
 
-        return window.cards.spawn('blank', comp.render(), id)
+        return window.cards.spawn(type, comp.render(), id)
     }
 
     spawnCard(type, data) {
@@ -57,44 +57,16 @@ class Robot {
     }
 
     update(id, data) {
-        window.cards.update(id, data)
+        // HACK: FIX THIS, MAYBE
+        setTimeout(() => window.cards.update(id, data))
     }
 
     setVoice(voice) {
         this.voice = voice
     }
 
-    userSaid(str, s) {
-		return str.toLowerCase().indexOf(s.toLowerCase()) > -1;
-	}
-
     hear(text, cb) {
-        var confidenceThreshold = 0.3
-        var recognition = new webkitSpeechRecognition()
-
-        if (typeof text === "string") {
-            text = [text]
-        }
-
-        recognition.continuous = true
-		recognition.interimResults = true
-
-        recognition.onresult = event => {
-            for (var i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    if (parseFloat(event.results[i][0].confidence) >= parseFloat(confidenceThreshold)) {
-                        var str = event.results[i][0].transcript;
-                        for (var i = 0; i < text.length; i++) {
-                            if (this.userSaid(str, text[i])) {
-                                cb(str)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        recognition.start()
+        SpeechRecognition.listenFor(text, cb)
     }
 
     speak(msg, opts) {

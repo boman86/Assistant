@@ -3,6 +3,75 @@ import { app } from "remote"
 import fs from "fs"
 import { ipcRenderer as ipc } from "electron"
 
+class PluginControlComponent {
+
+    constructor(robot, id) {
+        this.robot = robot
+        this.h = robot.h
+        this.id = id
+        this.List = robot.Immutable.List
+        this.manager = new PluginControlManager(this.robot)
+
+        this.base = "https://api.github.com"
+        this.org = "PersonalAssistant"
+        this.loading = []
+        this.repos = this.List([])
+
+        this.fetch()
+    }
+
+    fetch() {
+        this.robot.fetchJson(`${this.base}/orgs/${this.org}/repos`).then(data => {
+            this.repos = this.List(data)
+            this.repos.forEach(plugin => {
+                this.loading[plugin.full_name] = false
+            })
+            this.robot.update(this.id, this.render())
+        })
+    }
+
+    setLoading(loading, plugin) {
+        this.loading[plugin] = loading
+        this.robot.update(this.id, this.render())
+    }
+
+    install(plugin) {
+        this.setLoading(true, plugin)
+        this.manager.install(plugin, () => this.setLoading(false, plugin))
+    }
+
+    uninstall(plugin) {
+        this.setLoading(true, plugin)
+        this.manager.uninstall(plugin, () => this.setLoading(false, plugin))
+    }
+
+    renderButton(p) {
+        let installed = ipc.sendSync('check-plugin-exists', p.full_name)
+
+        return installed
+            ? this.h('button.button.button--red.right', {
+                onclick: (e) => this.uninstall(p.full_name)
+            }, [this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-trash-o'), "Remove"])
+            : this.h('button.button--theme.right', {
+                onclick: (e) => this.install(p.full_name)
+            }, [this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-download'), 'Install'])
+    }
+
+    renderItem(p) {
+        return this.h('span', {}, [
+            this.renderButton(p),
+            p.name
+        ])
+    }
+
+    render() {
+        return {
+            title: `${this.org} Available Plugins`,
+            items: this.repos.map(p => this.renderItem(p)).toArray()
+        }
+    }
+}
+
 class PluginControlManager {
     constructor(robot) {
         this.robot = robot
@@ -15,7 +84,7 @@ class PluginControlManager {
         }, 0)
     }
 
-    install(github) {
+    install(github, done) {
         let directory = app.getPath("userData") + "/plugins"
         let filename = +new Date()
         let path = `${directory}/${filename}`
@@ -25,6 +94,7 @@ class PluginControlManager {
 
         if (exists) {
             Event.fire('notification:info', "Plugin already installed!")
+            done()
             return
         }
 
@@ -33,6 +103,7 @@ class PluginControlManager {
             clone(repo, path, (err, result) => {
                 if (err) {
                     this.robot.fire('notification:error', "Something went wrong with the installation...")
+                    done()
                 } else {
                     this.robot.fire('notification:info', "Downloaded plugin...")
 
@@ -52,13 +123,14 @@ class PluginControlManager {
 
                     ipc.on('saved-plugin', (event, err) => {
                         if ( ! err) this.robot.fire('plugins:register_plugin', plugin)
+                        done()
                     })
                 }
             })
         })
     }
 
-    uninstall(github) {
+    uninstall(github, done) {
         if (ipc.sendSync('check-plugin-exists', github)) {
             var plugin = ipc.sendSync('remove-plugin', github)
 
@@ -68,8 +140,10 @@ class PluginControlManager {
             } else {
                 this.robot.fire("notification:error", `Could not remove ${github}`)
             }
+            done()
         } else {
             this.robot.fire("notification:warning", `We can not remove a plugin which is not installed`)
+            done()
         }
     }
 }
@@ -80,43 +154,17 @@ module.exports = robot => {
     const h = robot.h
     const manager = new PluginControlManager(robot)
 
-    robot.listen(/^test$/, "List of installed plugins", res => {
-        robot.fire('plugins:fetch_plugin_list', list => {
-            robot.spawnCard('list', {
-                title: 'Installed Plugins',
-                items: list.map(p => p.name).toArray()
-            })
-        })
-    })
+    // robot.listen(/^test$/, "List of installed plugins", res => {
+    //     robot.fire('plugins:fetch_plugin_list', list => {
+    //         robot.spawnCard('list', {
+    //             title: 'Installed Plugins',
+    //             items: list.map(p => p.name).toArray()
+    //         })
+    //     })
+    // })
 
     robot.listen(/^plugins? list online$/, "List of online plugins", res => {
-        let base = "https://api.github.com"
-        let org = "PersonalAssistant"
-
-        robot.fetchJson(`${base}/orgs/${org}/repos`)
-            .then(data => {
-                robot.spawnCard('list', {
-                    title: `${org} Available Plugins`,
-                    items: Immutable.List(data).map(p => {
-                        let installed = ipc.sendSync('check-plugin-exists', p.full_name)
-                        return h('span', {}, [
-                            installed
-                            ? h('button.button.button--red.right', {
-                                onclick: (e) => {
-                                    manager.uninstall(p.full_name)
-                                }
-                            }, [h('span.fa.fa-trash-o'), "Remove"])
-                            : h('button.button--theme.right', {
-                                disabled: installed,
-                                onclick: (e) => {
-                                    manager.install(p.full_name)
-                                }
-                            }, [h('span.fa.fa-download'), 'Install']),
-                            p.name
-                        ])
-                    }).toArray()
-                })
-            })
+        robot.spawn(PluginControlComponent, "list")
     })
 
     robot.listen(/^remove plugin (.*)$/, "Remove a plugin", res => {

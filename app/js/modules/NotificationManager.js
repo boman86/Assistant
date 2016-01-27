@@ -12,7 +12,8 @@ class NotificationManager {
         this[Notification] = h('div')
 
         // Ready for some Virtual Dom?
-        this[RootNode] = create(h('div'))
+        this.oldNode = h('div')
+        this[RootNode] = create(this.oldNode)
         this[output].appendChild(this[RootNode])
 
         Event.on('notification:error', msg => this.error(msg))
@@ -37,8 +38,9 @@ class NotificationManager {
 
     draw() {
         /** Starting Virtual DOM Magic */
-        let patches = diff(this[RootNode], this[Notification])
+        let patches = diff(this.oldNode, this[Notification])
         this[RootNode] = patch(this[RootNode], patches)
+        this.oldNode = this[Notification]
         /** Ending Virtual DOM Magic */
     }
 

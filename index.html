@@ -14,6 +14,9 @@
                 <span class="fa fa-terminal"></span>
             </div>
             <input id="input" autofocus="true" type="text" placeholder="Type your commands here...">
+            <div class="soundbar">
+                <div class="bar" id="soundbar"></div>
+            </div>
             <div class="notifications" id="notifications"></div>
         </div>
         <div class="tools">
@@ -34,6 +37,8 @@
         </div>
         <div class="output" id="output"></div>
     </div>
+
+    <script src="https://embed.tonicdev.com"></script>
 
     <script>
     const UP = 38
@@ -59,7 +64,7 @@
     var keyboardManager = require('./dist/js/modules/keyboardManager')
     var notificationManager = require('./dist/js/modules/NotificationManager')(notifications)
 
-    window.Event = Event = require("./dist/js/modules/Event")
+    Event = require("./dist/js/modules/Event")
     window.cards = cardManager = require('./dist/js/modules/cardManager')(output, undo, redo)
 
     cardManager.registerCard(require("./dist/js/modules/cards/Blank"))
@@ -137,9 +142,7 @@
     /** Print Help Card */
     pluginManager.execute("help")
 
-    setTimeout(() => {
-        ipc.send('show-main-windows')
-    })
+    setTimeout(() => ipc.send('show-main-windows'))
     </script>
 </body>
 </html>

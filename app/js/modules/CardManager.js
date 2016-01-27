@@ -68,6 +68,7 @@ class CardManager {
 
     update(id, render) {
         var card = this[Cards].find(c => c.get('id') == id)
+
         var index = this[Cards].findIndex(c => c.get('id') == id)
         var type = card.get('type')
 

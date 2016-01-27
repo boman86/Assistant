@@ -11,8 +11,17 @@ const BrowserWindow = electron.BrowserWindow
 var mainWindow;
 
 ipc.on('get-user-config', event => config.userConfig(c => event.returnValue = c))
-ipc.on('show-main-windows', () => {
-    mainWindow.show()
+ipc.on('show-main-windows', () => mainWindow.show())
+
+ipc.on('open-window', (event, data) => {
+    let win = new BrowserWindow({
+        width: data.width,
+        height: data.height,
+        allowRunningInsecureContent: true,
+        allowDisplayingInsecureContent: true
+    })
+
+    win.loadURL(data.url)
 })
 
 var createWindow = () => {
@@ -22,7 +31,6 @@ var createWindow = () => {
     });
 
     mainWindow = new BrowserWindow({
-        title: "My Personal Assistant",
         x: mainWindowState.x,
         y: mainWindowState.y,
         width: mainWindowState.width,
@@ -31,10 +39,7 @@ var createWindow = () => {
     })
     mainWindow.loadURL('file://' + __dirname + '/index.html')
     // mainWindow.webContents.openDevTools()
-    mainWindow.on('closed', () => {
-        mainWindow = null
-    })
-
+    mainWindow.on('closed', () => mainWindow = null)
     mainWindowState.manage(mainWindow)
 }
 

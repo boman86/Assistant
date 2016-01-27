@@ -1,10 +1,9 @@
 .notifications {
-
-    margin-top: -5px;
     position: absolute;
     left: 0;
     right: 0;
     will-change: transform;
+    z-index: 99999;
 
     @include e(notification) {
 
