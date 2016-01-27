@@ -14,8 +14,10 @@ class PluginControlComponent {
 
         this.base = "https://api.github.com"
         this.org = "PersonalAssistant"
+
         this.loading = []
         this.repos = this.List([])
+        this.fetching = true
 
         this.fetch()
     }
@@ -26,6 +28,9 @@ class PluginControlComponent {
             this.repos.forEach(plugin => {
                 this.loading[plugin.full_name] = false
             })
+
+            this.fetching = false
+
             this.robot.update(this.id, this.render())
         })
     }
@@ -50,11 +55,19 @@ class PluginControlComponent {
 
         return installed
             ? this.h('button.button.button--red.right', {
+                disabled: this.loading[p.full_name],
                 onclick: (e) => this.uninstall(p.full_name)
-            }, [this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-trash-o'), "Remove"])
+            }, [
+                this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-trash-o'),
+                this.h('span', {}, this.loading[p.full_name] ? 'Removing' : 'Remove')
+            ])
             : this.h('button.button--theme.right', {
+                disabled: this.loading[p.full_name],
                 onclick: (e) => this.install(p.full_name)
-            }, [this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-download'), 'Install'])
+            }, [
+                this.h(this.loading[p.full_name] ? 'span.fa.fa-spinner.fa-pulse' : 'span.fa.fa-download'),
+                this.h('span', {}, this.loading[p.full_name] ? 'Installing' : 'Install')
+            ])
     }
 
     renderItem(p) {
@@ -67,7 +80,12 @@ class PluginControlComponent {
     render() {
         return {
             title: `${this.org} Available Plugins`,
-            items: this.repos.map(p => this.renderItem(p)).toArray()
+            items: this.fetching
+                    ? [this.h('div', {}, [
+                        this.h('span.fa.fa-spinner.fa-pulse.breathing'),
+                        this.h('span', {}, "Loading online plugins...")
+                    ])]
+                    : this.repos.map(p => this.renderItem(p)).toArray()
         }
     }
 }
@@ -112,19 +130,16 @@ class PluginControlManager {
                     var plugin = {
                         github,
                         installedAt: +new Date(),
-                        name: github.split('/')[1].replace('Plugin-', ''),
+                        name: packageInfo.name || github.split('/')[1].replace('Plugin-', ''),
                         path,
                         version: packageInfo.version
                     }
 
                     this.robot.fire('notification:info', `Installing ${plugin.name} plugin...`)
 
-                    ipc.send('save-plugin', plugin)
+                    ipc.send("save-plugin", plugin)
 
-                    ipc.on('saved-plugin', (event, err) => {
-                        if ( ! err) this.robot.fire('plugins:register_plugin', plugin)
-                        done()
-                    })
+                    done()
                 }
             })
         })
@@ -153,6 +168,12 @@ module.exports = robot => {
     const Immutable = robot.Immutable
     const h = robot.h
     const manager = new PluginControlManager(robot)
+
+    ipc.on('saved-plugin', (event, data) => {
+        if ( ! data.err) {
+            robot.fire('plugins:register_plugin', data.plugin)
+        }
+    })
 
     // robot.listen(/^test$/, "List of installed plugins", res => {
     //     robot.fire('plugins:fetch_plugin_list', list => {

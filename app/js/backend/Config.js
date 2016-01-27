@@ -10,18 +10,19 @@ const app = electron.app
 const UserConfig = Symbol()
 
 const PLUGINS_PATH = app.getPath("userData") + "/plugins"
-const USER_CONFIG_PATH = app.getPath("userData") + "/user.config.js"
+const USER_CONFIG_PATH = app.getPath("userData") + "/user.config.json"
 
 class Config {
     constructor() {
         this.loadUserConfig(config => {
             this[UserConfig] = config
         })
+
         this.checkPluginsFolder()
 
         ipc.on('save-plugin', (event, plugin) => {
             this.addPlugin(plugin, err => {
-                event.sender.send('saved-plugin', err)
+                event.sender.send('saved-plugin', { err, plugin })
             })
         })
 

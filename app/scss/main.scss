@@ -19,7 +19,6 @@ html, body {
     box-sizing: border-box;
 }
 
-
 a {
     color: color($color-theme, 500);
     text-decoration: none;
@@ -108,9 +107,7 @@ h1, h2, h3, h4, h5, h6 {
         width: 100%;
         height: calc(100vh - #{$input-height});
         overflow-y: auto;
-
         margin-top: $input-height - ($padding * 0.5);
-
         padding: ($padding * 1.5) $padding;
     }
 
@@ -159,9 +156,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
+    content: "";
+    display: table;
+    clear: both;
 }
 
 pre {

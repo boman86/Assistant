@@ -51,10 +51,18 @@ class CardManager {
         this[Types] = this[Types].push(type)
     }
 
+    renderCard(type, data, id) {
+        return h('div', { key: id }, [
+            this[Types].filter(c => c.get('type') == type).first().get('card').cb(data)
+        ])
+    }
+
     spawn(type, render, id = false) {
+        id = id ? id : uuid()
+
         var card = Immutable.Map({
-            id: id ? id : uuid(),
-            rendered: this[Types].filter(c => c.get('type') == type).first().get('card').cb(render),
+            id,
+            rendered: this.renderCard(type, render, id),
             type,
             data: render
         })
@@ -73,7 +81,7 @@ class CardManager {
         var type = card.get('type')
 
         this[Cards] = this[Cards].update(index, card => {
-            return card.set('rendered', this[Types].filter(c => c.get('type') == type).first().get('card').cb(render))
+            return card.set('rendered', this.renderCard(type, render, card.get('id')))
         })
 
         this.render()
