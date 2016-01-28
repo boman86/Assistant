@@ -1,4 +1,5 @@
 import fs from "fs"
+import path from "path"
 import Immutable from 'immutable'
 import Plugin from './Plugin'
 import Event from './Event'
@@ -19,6 +20,17 @@ class PluginManager {
                 Event.fire("notification:success", `Succesfully registered ${plugin.name} plugin!`)
             } catch(e) {
                 Event.fire("notification:error", `Could not load plugin ${plugin.name}`)
+            }
+        })
+    }
+
+    loadFrom(dir) {
+        fs.readdir(dir, (err, files) => {
+            if ( ! err) {
+                files.forEach(file => {
+                    var fileName = path.basename(file, '.js')
+                    this.register(fileName, require(`${dir}/${fileName}`))
+                })
             }
         })
     }

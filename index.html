@@ -151,12 +151,13 @@
         }
     })
 
-    pluginManager.register("Help", require('./dist/js/modules/plugins/Help'))
-    pluginManager.register("Plugin Control", require('./dist/js/modules/plugins/PluginControl'))
+    pluginManager.register("Help", require(`${__dirname}/dist/js/modules/plugins/Help`))
+    pluginManager.register("Plugin Control", require(`${__dirname}/dist/js/modules/plugins/PluginControl`))
+
+    pluginManager.loadFrom(`${__dirname}/dist/js/modules/plugins/playground`)
 
     /** Print Help Card */
-    pluginManager.execute("help")
-
+    setTimeout(() => pluginManager.execute("help"))
     setTimeout(() => ipc.send('show-main-windows'))
     </script>
 </body>
