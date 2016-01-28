@@ -28,7 +28,21 @@ class Config {
             this[USER_CONFIG] = Map(config)
         })
 
+        this.wins = List([])
+
         this[CONFIGURATIONS] = List(configurations).map(conf => new conf(this))
+    }
+
+    addWindow(win) {
+        this.wins = this.wins.push(win)
+    }
+
+    removeWindow(id) {
+        this.wins = this.wins.filter(win => win.id != id)
+    }
+
+    notifyWindows(event, data) {
+        this.wins.forEach(win => win.win.webContents.send(event, data))
     }
 
     setState(data) {

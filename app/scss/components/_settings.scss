@@ -51,7 +51,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    
+
     padding: $padding;
     background-color: #28323E;
     overflow: hidden;
@@ -73,6 +73,15 @@
         position: absolute;
         top: (-1 * ($item-size / 2));
         right: (-1 * ($item-size / 2));
+
+        .fa {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-top: 5px;
+            margin-left: -5px;
+        }
     }
 
     h3 {

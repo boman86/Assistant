@@ -12,7 +12,10 @@ class ThemeConfig {
 
     constructor(manager) {
         this.manager = manager
-
+        this.themeColor = null
+        this.manager.userConfig(data => {
+            this.themeColor = data.get('themeColor')
+        })
         ipc.on('change-theme', (event, color) => this.changeTheme(color))
     }
 
@@ -32,10 +35,12 @@ class ThemeConfig {
             }
         }
 
-        if (found) {
+        if (found && color != this.themeColor) {
             this.manager.setState({
                 themeColor: color
             })
+
+            this.manager.notifyWindows('changed-theme', color)
         }
     }
 

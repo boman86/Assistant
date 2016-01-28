@@ -5,11 +5,15 @@ const windowStateKeeper = require('electron-window-state')
 const config = require('./dist/js/backend/Config')
 const ipc = electron.ipcMain
 const Immutable = require('Immutable')
+var uuid = require('uuid')
+
+uuid = uuid.v4
 
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 
 var mainWindow;
+var mainWindowId = null;
 var windows = [];
 
 ipc.on('get-user-config', event => config.userConfig(c => event.returnValue = c))
@@ -30,16 +34,23 @@ ipc.on('open-window', (event, url) => {
                 show: true,
                 titleBarStyle: 'hidden-inset'
             }),
-            url: url
+            url: url,
+            id: uuid()
         }
+
+        config.addWindow(windows[index])
+
         windows[index].win.loadURL('file://' + __dirname + '/' + url)
         windows[index].win.on('closed', () => {
+            config.removeWindow(windows[index].id)
             windows.splice(index, 1)
         })
     }
 })
 
 var createWindow = () => {
+    mainWindowId = uuid()
+
     let mainWindowState = windowStateKeeper({
         defaultWidth: 1000,
         defaultHeight: 800
@@ -53,10 +64,20 @@ var createWindow = () => {
         show: false,
         titleBarStyle: 'hidden-inset'
     })
+
+    config.addWindow({
+        win: mainWindow,
+        id: mainWindowId
+    })
+
     mainWindow.loadURL('file://' + __dirname + '/index.html')
 
     // mainWindow.webContents.openDevTools()
-    mainWindow.on('closed', () => mainWindow = null)
+    mainWindow.on('closed', () => {
+        mainWindow = null
+        mainWindowId = null
+        config.removeWindow(mainWindowId)
+    })
     mainWindowState.manage(mainWindow)
 }
 

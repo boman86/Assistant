@@ -93,7 +93,7 @@
     cardManager.registerCard(require("./dist/js/modules/cards/Table"))
 
     clear.addEventListener('click', () => Event.fire('clear'))
-    Event.on("settings:change-theme", theme => {
+    ipc.on("changed-theme", (event, theme) => {
         changeTheme(theme)
     })
 
