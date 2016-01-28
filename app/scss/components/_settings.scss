@@ -8,26 +8,30 @@
         left: 0;
         width: $sidebar-width;
         bottom: 0;
-        background: #28323E;
+        background: color($color-theme, 700);
         margin: 0;
         padding: 0;
         padding-top: $offset;
 
         span.fa {
             margin-right: 4px;
-            color: #727F90;
+            color: white;
         }
 
         li {
             margin: 0;
             padding: 12px 20px;
             list-style: none;
-            color: #99A6B8;
+            color: white;
 
             &.active,
             &:hover {
-                background-color: #394556;
-                color: white;
+                background-color: color($color-theme, 600);
+                //color: rgba(0, 0, 0, 0.5);
+
+                span.fa {
+                    //color: rgba(0, 0, 0, 0.5);
+                }
             }
         }
     }

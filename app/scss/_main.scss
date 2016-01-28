@@ -99,8 +99,12 @@ h1, h2, h3, h4, h5, h6 {
             padding: 0 $padding;
             padding-left: ($padding + (20px * 2));
             font-size: 20px;
-            color: lighten($color, 50%);
+            color: white;
             background-color: $bar-background-color;
+
+            &::-webkit-input-placeholder {
+                color: rgba(255, 255, 255, 0.87);
+            }
 
             &:active, &:focus {
                 outline: none;

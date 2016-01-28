@@ -39,7 +39,7 @@ class ThemeConfig {
             this.manager.setState({
                 themeColor: color
             })
-
+            this.themeColor = color
             this.manager.notifyWindows('changed-theme', color)
         }
     }

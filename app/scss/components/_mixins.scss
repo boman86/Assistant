@@ -21,3 +21,13 @@
 
     @return $x1;
 }
+
+@function yiq($color, $light: rgba(255, 255, 255, 0.87), $dark: rgba(0, 0, 0, 0.87)) {
+    $r: red($color) * 255;
+    $g: green($color) * 255;
+    $b: blue($color) * 255;
+
+    $yiq: ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+    @return if($yiq >= 128, $dark, $light);
+}
