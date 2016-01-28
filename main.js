@@ -35,7 +35,8 @@ var createWindow = () => {
         y: mainWindowState.y,
         width: mainWindowState.width,
         height: mainWindowState.height,
-        show: false
+        show: false,
+        titleBarStyle: 'hidden-inset'
     })
     mainWindow.loadURL('file://' + __dirname + '/index.html')
     // mainWindow.webContents.openDevTools()
