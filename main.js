@@ -17,9 +17,7 @@ var mainWindowId = null;
 var windows = [];
 
 ipc.on('get-user-config', event => config.userConfig(c => event.returnValue = c))
-ipc.on('show-main-window', () => mainWindow.show())
 ipc.on('open-window', (event, url) => {
-
     var item = Immutable.List(windows).filter(win => win.url == url).first()
 
     if (item) {
@@ -31,7 +29,7 @@ ipc.on('open-window', (event, url) => {
             win: new BrowserWindow({
                 width: 800,
                 height: 600,
-                show: true,
+                show: false,
                 titleBarStyle: 'hidden-inset'
             }),
             url: url,
@@ -41,6 +39,11 @@ ipc.on('open-window', (event, url) => {
         config.addWindow(windows[index])
 
         windows[index].win.loadURL('file://' + __dirname + '/' + url)
+
+        windows[index].win.webContents.on('dom-ready', () => {
+            windows[index].win.show()
+        })
+
         windows[index].win.on('closed', () => {
             config.removeWindow(windows[index].id)
             windows.splice(index, 1)
@@ -73,6 +76,9 @@ var createWindow = () => {
     mainWindow.loadURL('file://' + __dirname + '/index.html')
 
     // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.on('dom-ready', () => {
+        mainWindow.show()
+    })
     mainWindow.on('closed', () => {
         mainWindow = null
         mainWindowId = null
