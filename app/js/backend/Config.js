@@ -1,57 +1,38 @@
 import fs from "fs"
-import electron, { ipcMain as ipc } from "electron"
-import username from "username"
-import Immutable from "immutable"
-import { exec } from "child_process"
-import Utilities from "./Utilities"
+import electron, { ipcMain as ipc, app } from "electron"
+import { List, Map } from "immutable"
 
-const app = electron.app
+import ThemeConfig from "./Config/Theme"
+import PluginConfig from "./Config/Plugin"
+import PersonalConfig from "./Config/Personal"
 
-const UserConfig = Symbol()
-
-const PLUGINS_PATH = app.getPath("userData") + "/plugins"
+const CONFIGURATIONS = Symbol()
+const USER_CONFIG = Symbol()
 const USER_CONFIG_PATH = app.getPath("userData") + "/user.config.json"
 
+const configurations = [
+    PersonalConfig,
+    ThemeConfig,
+    PluginConfig
+]
+
 class Config {
-    constructor() {
-        this.loadUserConfig(config => {
-            this[UserConfig] = config
-        })
-
-        this.checkPluginsFolder()
-
-        ipc.on('save-plugin', (event, plugin) => {
-            this.addPlugin(plugin, err => {
-                event.sender.send('saved-plugin', { err, plugin })
-            })
-        })
-
-        ipc.on('check-plugin-exists', (event, githubVendorPackage) => {
-            event.returnValue = Immutable.List(this[UserConfig].plugins).filter(p => p.github == githubVendorPackage).count() > 0
-        })
-
-        ipc.on('remove-plugin', (event, githubVendorPackage) => {
-            let plugin = Immutable.List(this[UserConfig].plugins).filter(p => p.github == githubVendorPackage).first()
-
-            if (plugin) {
-                Utilities.rmdir(plugin.path)
-                this[UserConfig].plugins = Immutable.List(this[UserConfig].plugins).filter(p => p.github != githubVendorPackage).toArray()
-                this.persist()
-                event.returnValue = plugin
-            } else {
-                event.returnValue = false
-            }
-        })
+    defaultConfig() {
+        return this[CONFIGURATIONS].reduce((prev, conf) => {
+            return prev.merge(conf.defaultConfig())
+        }, Map({}))
     }
 
-    addPlugin(plugin, cb) {
-        this[UserConfig].plugins.push(plugin)
-
-        let path = plugin.path.replace(/(\s)/, "\\ ")
-
-        exec(`cd ${path} && npm install --production`, (err, stdout, stderr) => {
-            cb(err || stderr)
+    constructor() {
+        this.loadUserConfig(config => {
+            this[USER_CONFIG] = Map(config)
         })
+
+        this[CONFIGURATIONS] = List(configurations).map(conf => new conf(this))
+    }
+
+    setState(data) {
+        this[USER_CONFIG] = this[USER_CONFIG].merge(data)
 
         this.persist()
     }
@@ -59,30 +40,19 @@ class Config {
     userConfig(cb) {
         // Wait until it is loaded...
         var fileInterval = setInterval(() => {
-            if (this[UserConfig]){
-                cb(Object.assign({}, this.defaultConfig(), this[UserConfig]))
+            if (this[USER_CONFIG]){
+                cb(Map({}).merge(this.defaultConfig()).merge(this[USER_CONFIG]))
 
                 clearInterval(fileInterval)
             }
         }, 200)
     }
 
-    defaultConfig() {
-        return {
-            username: username.sync(),
-            plugins: []
-        }
-    }
-
     loadUserConfig(cb) {
         fs.exists(USER_CONFIG_PATH, exists => {
             if (exists) {
                 fs.readFile(USER_CONFIG_PATH, (err, res) => {
-                    if ( ! err) {
-                        cb(JSON.parse(res))
-                    } else {
-                        cb(this.defaultConfig())
-                    }
+                    cb(err ? this.defaultConfig() : JSON.parse(res))
                 })
             } else {
                 fs.writeFile(USER_CONFIG_PATH, JSON.stringify(this.defaultConfig(), null, '  '))
@@ -91,12 +61,8 @@ class Config {
         })
     }
 
-    checkPluginsFolder() {
-        fs.exists(PLUGINS_PATH, exists => ! exists ? fs.mkdir(PLUGINS_PATH) : null)
-    }
-
     persist() {
-        fs.writeFile(USER_CONFIG_PATH, JSON.stringify(this[UserConfig], null, '  '))
+        fs.writeFile(USER_CONFIG_PATH, JSON.stringify(this[USER_CONFIG].toJS(), null, '  '))
     }
 }
 

@@ -1,11 +1,12 @@
-@import "components/mixins";
 @import "components/color";
 @import "components/theme";
+@import "components/mixins";
 @import "components/notifications";
 @import "components/table";
 @import "components/card";
 @import "components/button";
 @import "components/utilities";
+@import "components/settings";
 
 html {
     overflow: hidden;

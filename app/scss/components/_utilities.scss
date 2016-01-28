@@ -37,6 +37,10 @@
     color: color($color-theme)
 }
 
+.background-theme {
+    background-color: color($color-theme)
+}
+
 /**
  * Spacing Utilities
  */
@@ -63,6 +67,21 @@
         // .text-theme-300 -> this only for the theme, but with each tint
         .text-theme-#{$tint} {
             color: color($color-theme, $tint)
+        }
+
+        // .background-red-300 -> this for each color and each tint
+        .background-#{$color}-#{$tint} {
+            background-color: color($color, $tint);
+        }
+
+        // .background-red -> this for each color with a 500 tint
+        .background-#{$color} {
+            background-color: color($color);
+        }
+
+        // .background-theme-300 -> this only for the theme, but with each tint
+        .background-theme-#{$tint} {
+            background-color: color($color-theme, $tint)
         }
     }
 

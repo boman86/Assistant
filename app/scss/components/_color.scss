@@ -341,6 +341,5 @@ $colors: (
         }
     }
 
-    @warn "Unknown `#{$color}` in $colors.";
     @return $color;
 }

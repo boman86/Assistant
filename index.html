@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Personal Assistant</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="dist/css/main.css">
+    <link id="theme" rel="stylesheet" href="dist/css/indigo.css">
 </head>
 <body>
     <div class="container">
@@ -53,6 +53,7 @@
     const redo = document.getElementById('redo')
     const clear = document.getElementById('clear')
     const notifications = document.getElementById('notifications')
+    const theme = document.getElementById("theme")
 
     document.addEventListener('click', e => {
         for(var i = 0; i < e.path.length; i++) {
@@ -72,6 +73,10 @@
     var userConfig;
 
     window.userConfig = userConfig = ipc.sendSync('get-user-config')
+    var changeTheme = newTheme => {
+        theme.href = `dist/css/${newTheme}.css`
+    }
+    changeTheme(userConfig.themeColor)
 
     var historyManager = require('./dist/js/modules/HistoryManager')
     var pluginManager = require('./dist/js/modules/PluginManager')
@@ -88,6 +93,9 @@
     cardManager.registerCard(require("./dist/js/modules/cards/Table"))
 
     clear.addEventListener('click', () => Event.fire('clear'))
+    Event.on("settings:change-theme", theme => {
+        changeTheme(theme)
+    })
 
     // function recordSequence() {
     //     record_idle.style.display = "none";
@@ -103,7 +111,9 @@
 
     keyboardManager.registerEvent(['ctrl+z', 'meta+z'], 'history:undo')
     keyboardManager.registerEvent(['ctrl+y', 'meta+y'], 'history:redo')
-    keyboardManager.register('meta+,', () => pluginManager.execute("plugin list online"))
+    keyboardManager.register('meta+,', () => {
+        ipc.send('open-window', 'app/pages/settings.html')
+    })
     keyboardManager.register('esc', () => input.focus())
 
     input.addEventListener('keydown', event => {
@@ -158,7 +168,8 @@
 
     /** Print Help Card */
     setTimeout(() => pluginManager.execute("help"))
-    setTimeout(() => ipc.send('show-main-windows'))
+    setTimeout(() => ipc.send('show-main-window'))
+    setTimeout(() => ipc.send('open-window', 'app/pages/settings.html'))
     </script>
 </body>
 </html>

@@ -1,23 +1,6 @@
 module.exports = robot => {
     const h = robot.h
 
-    // robot.hear(/battery level/, msg => {
-    //     robot.fire("plugins:execute", "battery level")
-    // })
-    //
-    // robot.hear(/battery charging/, msg => {
-    //     robot.fire("plugins:execute", "battery charging")
-    // })
-    //
-    // robot.hear(/(\d*) pictures/, msg => {
-    //     let count = +msg.matches[1] || 10
-    //     robot.fire("plugins:execute", `cat ${count}`)
-    // })
-    //
-    // robot.hear([/clear my screen/, /clean my screen/], msg => {
-    //     robot.fire("clear:screen")
-    // })
-
     robot.listen(/help/, "Show a list of all available commands", res => {
         robot.fire('plugins:fetch_plugin_list', list => {
 

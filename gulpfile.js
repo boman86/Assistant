@@ -3,13 +3,14 @@ var gulp = require('gulp'),
     csso = require('gulp-csso'),
     plumber = require('gulp-plumber'),
     gutil = require('gulp-util'),
+    rimraf = require('gulp-rimraf'),
     babel = require('gulp-babel');
 
 var config = {
     src: {
         css: {
-            endpoint: 'app/scss/main.scss',
-            files: 'app/scss/**/*.scss'
+            files: 'app/scss/**/*.scss',
+            themes: 'app/scss/themes/*.scss'
         },
         html: '**/*.html',
         js: 'app/js/**/*.js'
@@ -17,7 +18,8 @@ var config = {
     dest: {
         css: 'dist/css',
         js: 'dist/js'
-    }
+    },
+    destFolder: 'dist'
 };
 
 var onError = function (err) {
@@ -32,8 +34,16 @@ gulp.task('watch', ['build'], function() {
     gulp.watch(config.src.html);
 });
 
+gulp.task('clean', function () {
+    return gulp.src(config.destFolder, { read: false })
+            .pipe(plumber({
+                errorHandler: onError
+            }))
+            .pipe(rimraf());
+});
+
 gulp.task('css', function() {
-    return gulp.src(config.src.css.endpoint)
+    return gulp.src(config.src.css.themes)
         .pipe(plumber({
             errorHandler: onError
         }))
@@ -49,7 +59,7 @@ gulp.task('js', function () {
         }))
         .pipe(babel())
         .pipe(gulp.dest(config.dest.js));
-});;
+});
 
-gulp.task('build', ['css', 'js']);
+gulp.task('build', ['clean', 'css', 'js']);
 gulp.task('default', ['watch']);
