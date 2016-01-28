@@ -5,6 +5,7 @@
 @import "components/table";
 @import "components/card";
 @import "components/button";
+@import "components/utilities";
 
 html {
     overflow: hidden;
@@ -158,28 +159,6 @@ h1, h2, h3, h4, h5, h6 {
     color: color('red');
 }
 
-.clearfix:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
 pre {
     white-space: pre-wrap;
-}
-
-.right {
-    float: right;
-}
-
-.left {
-    float: left;
-}
-
-.muted {
-    color: color('grey', 500)
-}
-
-.breathing {
-    margin: 0 8px;
 }

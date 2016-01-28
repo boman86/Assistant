@@ -1,0 +1,93 @@
+/**
+ * Positioning
+ */
+.clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+/**
+ * Text Positioning
+ */
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+/**
+ * Text Colors
+ */
+.muted {
+    color: color('grey', 500)
+}
+
+.text-theme {
+    color: color($color-theme)
+}
+
+/**
+ * Spacing Utilities
+ */
+.breathing {
+    margin: 0 8px;
+}
+
+/**
+ * Color Utilities
+ */
+@each $color, $shades in $colors {
+    @each $tint, $value in $shades {
+
+        // .text-red-300 -> this for each color and each tint
+        .text-#{$color}-#{$tint} {
+            color: color($color, $tint);
+        }
+
+        // .text-red -> this for each color with a 500 tint
+        .text-#{$color} {
+            color: color($color);
+        }
+
+        // .text-theme-300 -> this only for the theme, but with each tint
+        .text-theme-#{$tint} {
+            color: color($color-theme, $tint)
+        }
+    }
+
+    button {
+        &.button {
+
+            // .button-red -> this for each color
+            @include m(#{$color}) {
+                background-color: color($color, 800);
+
+                &:focus,
+                &:hover {
+                    background-color: color($color, 600);
+                }
+            }
+
+            // .button--theme -> for current theme color
+            @include m(theme) {
+                background-color: color($color-theme, 800);
+
+                &:focus,
+                &:hover {
+                    background-color: color($color-theme, 600);
+                }
+            }
+        }
+    }
+}
