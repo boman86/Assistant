@@ -59,7 +59,7 @@ module.exports = robot => {
                 h('tbody', {}, children),
                 h('tfoot', {}, [
                     h('tr', {}, [
-                        h('td', `${list.count()} plugins installed.`)
+                        h('td', { colSpan: 3 }, `${list.count()} plugins installed.`)
                     ])
                 ])
             ])
