@@ -57,7 +57,8 @@ class PluginConfig {
 
         if (plugin) {
             Utilities.rmdir(plugin.path)
-            this[PLUGINS] = this[PLUGINS].filter(p => p.github != githubVendorPackage).toArray()
+            this[PLUGINS] = this[PLUGINS].filter(p => p.github != githubVendorPackage)
+
             this.manager.setState({
                 plugins: this[PLUGINS].toArray()
             })
@@ -65,7 +66,9 @@ class PluginConfig {
             return plugin
         }
 
-        done()
+        setTimeout(() => {
+          done()
+        })
 
         return false
     }
@@ -109,13 +112,15 @@ class PluginConfig {
     addPlugin(plugin, cb) {
         let path = plugin.path.replace(/(\s)/, "\\ ")
 
+        this[PLUGINS] = this[PLUGINS].push(plugin)
+
         exec(`cd ${path} && npm install --production`, (err, stdout, stderr) => {
             if ( ! (err || stderr)) {
-                this[PLUGINS] = this[PLUGINS].push(plugin)
-
                 this.manager.setState({
                     plugins: this[PLUGINS].toArray()
                 })
+            } else {
+                this[PLUGINS] = this[PLUGINS].filter(p => p.github != plugin.github)
             }
 
             cb(err || stderr)
