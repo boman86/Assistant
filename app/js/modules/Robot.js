@@ -3,6 +3,7 @@ import { h } from "virtual-dom"
 import Event from "./Event"
 import { v4 as uuid } from "uuid"
 import SpeechRecognition from "./SpeechRecognition"
+import StateMachine from "../StateMachine"
 
 const Observers = Symbol()
 
@@ -45,10 +46,9 @@ class Robot {
         Event.fire(event, data)
     }
 
-    spawn(component, type = "blank") {
+    spawn(component, type = "blank", data = {}) {
         let id = uuid()
-        let comp = new component(this, id)
-
+        let comp = new component(this, new StateMachine(() => this.update(id, comp.render())), data)
         return window.cards.spawn(type, comp.render(), id)
     }
 
@@ -57,8 +57,7 @@ class Robot {
     }
 
     update(id, data) {
-        // HACK: FIX THIS, MAYBE
-        setTimeout(() => window.cards.update(id, data))
+        window.cards.update(id, data)
     }
 
     setVoice(voice) {

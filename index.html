@@ -109,11 +109,12 @@
     //     });
     // }
 
-    keyboardManager.registerEvent(['ctrl+z', 'meta+z'], 'history:undo')
-    keyboardManager.registerEvent(['ctrl+y', 'meta+y'], 'history:redo')
-    keyboardManager.register('meta+,', () => {
-        ipc.send('open-window', 'app/pages/settings.html')
+    ipc.on('history:undo', () => Event.fire('history:undo'))
+    ipc.on('history:redo', () => Event.fire('history:redo'))
+    ipc.on('open-window', (event, url) => {
+        ipc.send('open-window', url)
     })
+
     keyboardManager.register('esc', () => input.focus())
 
     input.addEventListener('keydown', event => {
@@ -164,11 +165,13 @@
     pluginManager.register("Help", require(`${__dirname}/dist/js/modules/plugins/Help`))
     pluginManager.register("Plugin Control", require(`${__dirname}/dist/js/modules/plugins/PluginControl`))
 
-    pluginManager.loadFrom(`${__dirname}/dist/js/modules/plugins/playground`)
-
     /** Print Help Card */
-    setTimeout(() => pluginManager.execute("help"))
-    setTimeout(() => ipc.send('open-window', 'app/pages/settings.html'))
+    userConfig.startup.forEach(start => {
+        pluginManager.execute(start)
+    })
+
+    pluginManager.loadFrom(`${__dirname}/dist/js/modules/plugins/playground`)
+    // setTimeout(() => ipc.send('open-window', 'app/pages/settings.html'))
     </script>
 </body>
 </html>

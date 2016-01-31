@@ -8,45 +8,14 @@
     <link id="theme" rel="stylesheet" href="../../dist/css/indigo.css">
 </head>
 <body>
-    <div class="settings">
-        <ul class="sidebar">
-            <li><span class="fa fa-plug"></span> Plugins</li>
-            <li class="active"><span class="fa fa-paint-brush"></span> Themes</li>
-        </ul>
-        <div class="content">
-            <div class="theme-chooser">
-                <h3>Choose Your Theme</h3>
-                <div class="current background-theme">
-                    <span class="fa fa-paint-brush text-theme-200"></span>
-                </div>
-                <ul>
-                    <li onclick="chooseTheme('amber');" class="background-amber"></li>
-                    <li onclick="chooseTheme('blue-grey');" class="background-blue-grey"></li>
-                    <li onclick="chooseTheme('blue');" class="background-blue"></li>
-                    <li onclick="chooseTheme('brown');" class="background-brown"></li>
-                    <li onclick="chooseTheme('cyan');" class="background-cyan"></li>
-                    <li onclick="chooseTheme('deep-orange');" class="background-deep-orange"></li>
-                    <li onclick="chooseTheme('deep-purple');" class="background-deep-purple"></li>
-                    <li onclick="chooseTheme('green');" class="background-green"></li>
-                    <li onclick="chooseTheme('grey');" class="background-grey"></li>
-                    <li onclick="chooseTheme('indigo');" class="background-indigo"></li>
-                    <li onclick="chooseTheme('light-blue');" class="background-light-blue"></li>
-                    <li onclick="chooseTheme('light-green');" class="background-light-green"></li>
-                    <li onclick="chooseTheme('lime');" class="background-lime"></li>
-                    <li onclick="chooseTheme('orange');" class="background-orange"></li>
-                    <li onclick="chooseTheme('pink');" class="background-pink"></li>
-                    <li onclick="chooseTheme('purple');" class="background-purple"></li>
-                    <li onclick="chooseTheme('red');" class="background-red"></li>
-                    <li onclick="chooseTheme('teal');" class="background-teal"></li>
-                    <li onclick="chooseTheme('yellow');" class="background-yellow"></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
+    <div class="header"></div>
+    <div class="Settings" id="output"></div>
     <script>
     const electron = require('electron')
     const ipc = electron.ipcRenderer
+    const shell = electron.shell
+    const theme = document.getElementById("theme")
+    const SettingsPage = require('../../dist/js/modules/pages/SettingsPage')
 
     var Event = require("../../dist/js/modules/Event")
     var userConfig = ipc.sendSync('get-user-config')
@@ -56,12 +25,21 @@
 
     changeTheme(userConfig.themeColor)
 
-    var chooseTheme = color => {
-        ipc.send("change-theme", color)
-        changeTheme(color)
-    }
+    ipc.on("changed-theme", (event, theme) => {
+        changeTheme(theme)
+    })
 
-    Event.on("settings:change-theme", theme => changeTheme(theme))
+    document.addEventListener('click', e => {
+        for(var i = 0; i < e.path.length; i++) {
+            var item = e.path[i]
+
+            if (item.localName == "a") {
+                e.preventDefault()
+                shell.openExternal(item.href)
+                break;
+            }
+        }
+    })
     </script>
 </body>
 </html>

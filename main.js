@@ -5,17 +5,26 @@ const windowStateKeeper = require('electron-window-state')
 const config = require('./dist/js/backend/Config')
 const ipc = electron.ipcMain
 const Immutable = require('Immutable')
-var uuid = require('uuid')
+const menuTemplate = require('./dist/js/Menu')
 
+var uuid = require('uuid')
 uuid = uuid.v4
 
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
+const Menu = electron.Menu
 
 var mainWindow;
 var mainWindowId = null;
 var windows = [];
 
+ipc.on('show-main-window', () => {
+    if (mainWindow) {
+        mainWindow.show()
+    } else {
+        createWindow()
+    }
+})
 ipc.on('get-user-config', event => config.userConfig(c => event.returnValue = c))
 ipc.on('open-window', (event, url) => {
     var item = Immutable.List(windows).filter(win => win.url == url).first()
@@ -30,6 +39,8 @@ ipc.on('open-window', (event, url) => {
                 width: 800,
                 height: 600,
                 show: false,
+                'min-height': 450,
+                'min-width': 650,
                 titleBarStyle: 'hidden-inset'
             }),
             url: url,
@@ -39,6 +50,7 @@ ipc.on('open-window', (event, url) => {
         config.addWindow(windows[index])
 
         windows[index].win.loadURL('file://' + __dirname + '/' + url)
+        windows[index].win.webContents.openDevTools()
 
         windows[index].win.webContents.on('dom-ready', () => {
             windows[index].win.show()
@@ -68,6 +80,12 @@ var createWindow = () => {
         titleBarStyle: 'hidden-inset'
     })
 
+    Menu.setApplicationMenu(
+        Menu.buildFromTemplate(
+            menuTemplate(mainWindow.webContents, app.getName())
+        )
+    )
+
     config.addWindow({
         win: mainWindow,
         id: mainWindowId
@@ -80,9 +98,10 @@ var createWindow = () => {
         mainWindow.show()
     })
     mainWindow.on('closed', () => {
+        config.removeWindow(mainWindowId)
+
         mainWindow = null
         mainWindowId = null
-        config.removeWindow(mainWindowId)
     })
     mainWindowState.manage(mainWindow)
 }

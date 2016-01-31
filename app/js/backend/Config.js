@@ -5,6 +5,7 @@ import { List, Map } from "immutable"
 import ThemeConfig from "./Config/Theme"
 import PluginConfig from "./Config/Plugin"
 import PersonalConfig from "./Config/Personal"
+import StartupConfig from "./Config/Startup"
 
 const CONFIGURATIONS = Symbol()
 const USER_CONFIG = Symbol()
@@ -12,6 +13,7 @@ const USER_CONFIG_PATH = app.getPath("userData") + "/user.config.json"
 
 const configurations = [
     PersonalConfig,
+    StartupConfig,
     ThemeConfig,
     PluginConfig
 ]
@@ -42,7 +44,7 @@ class Config {
     }
 
     notifyWindows(event, data) {
-        this.wins.forEach(win => win.win.webContents.send(event, data))
+        this.wins.forEach(w => w.win.webContents.send(event, data))
     }
 
     setState(data) {
@@ -76,7 +78,7 @@ class Config {
     }
 
     persist() {
-        fs.writeFile(USER_CONFIG_PATH, JSON.stringify(this[USER_CONFIG].toJS(), null, '  '))
+        fs.writeFile(USER_CONFIG_PATH, JSON.stringify(this.defaultConfig().merge(this[USER_CONFIG]).toJS(), null, '  '))
     }
 }
 

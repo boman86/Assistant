@@ -6,16 +6,17 @@
     background-color: $card-background;
     padding: $padding;
     border-radius: 3px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12),
-                0 2px 8px 0 rgba(0, 0, 0, 0.24);
+
+    @extend .shadow-2;
 
     @include m(list) {
         display: block;
         list-style-type: none;
         padding: 0;
         margin: 0.5rem 0 1rem 0;
-        border: 1px solid #e0e0e0;
         border-radius: 2px;
+
+        @extend .shadow-1;
 
         @include e(item) {
             background-color: #fff;
