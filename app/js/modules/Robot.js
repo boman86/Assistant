@@ -38,6 +38,16 @@ class Robot {
         return fetch(url).then(res => res.json())
     }
 
+    jsonToFormData(payload) {
+        var form = new FormData()
+
+        for (var key in payload) {
+            form.append(key, payload[key])
+        }
+
+        return form
+    }
+
     on(event, cb) {
         Event.on(event, cb)
     }

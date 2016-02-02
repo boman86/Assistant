@@ -165,13 +165,15 @@
     pluginManager.register("Help", require(`${__dirname}/dist/js/modules/plugins/Help`))
     pluginManager.register("Plugin Control", require(`${__dirname}/dist/js/modules/plugins/PluginControl`))
 
-    /** Print Help Card */
-    userConfig.startup.forEach(start => {
-        pluginManager.execute(start)
-    })
-
     pluginManager.loadFrom(`${__dirname}/dist/js/modules/plugins/playground`)
-    // setTimeout(() => ipc.send('open-window', 'app/pages/settings.html'))
+
+    /** Print Help Card */
+    console.log(`Executing: [${userConfig.startup.join(', ')}]`)
+    userConfig.startup.forEach(start => {
+        setTimeout(() => {
+            pluginManager.execute(start)
+        })
+    })
     </script>
 </body>
 </html>

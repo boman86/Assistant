@@ -49,7 +49,12 @@ ipc.on('open-window', (event, url) => {
 
         config.addWindow(windows[index])
 
-        windows[index].win.loadURL('file://' + __dirname + '/' + url)
+        if (/https?/i.test(url)) {
+            windows[index].win.loadURL(url)
+        } else {
+            windows[index].win.loadURL('file://' + __dirname + '/' + url)
+        }
+
         windows[index].win.webContents.openDevTools()
 
         windows[index].win.webContents.on('dom-ready', () => {
