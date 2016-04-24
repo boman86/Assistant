@@ -1,4 +1,5 @@
 import Immutable from "Immutable"
+import WS from "./_ws"
 
 const Events = Symbol()
 
@@ -13,6 +14,10 @@ class Event {
 
     fire(event, data) {
         this[Events].get(event, Immutable.List([])).forEach(item => item.get('cb')(data))
+    }
+
+    onSocket(channel) {
+        WS.subscribe(channel, (data, channel) => this.fire(channel, data))
     }
 }
 

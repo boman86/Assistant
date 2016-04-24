@@ -24,10 +24,16 @@
   "license": "MIT",
   "dependencies": {
     "debounce": "^1.0.0",
+    "electron-webrtc": "^0.2.2",
     "electron-window-state": "^2.0.0",
     "git-clone": "^0.1.0",
     "immutable": "^3.7.6",
     "mousetrap": "^1.5.3",
+    "peerjs": "^0.3.14",
+    "simple-ssh": "^0.8.9",
+    "socket.io": "^1.4.5",
+    "socket.io-stream": "^0.9.0",
+    "terminal.js": "^1.0.7",
     "username": "^1.0.1",
     "uuid": "^2.0.1",
     "virtual-dom": "^2.1.1"
@@ -41,6 +47,7 @@
     "gulp-csso": "^1.0.1",
     "gulp-plumber": "^1.0.1",
     "gulp-sass": "^2.1.1",
-    "gulp-util": "^3.0.7"
+    "gulp-util": "^3.0.7",
+    "html2hscript": "^2.0.1"
   }
 }

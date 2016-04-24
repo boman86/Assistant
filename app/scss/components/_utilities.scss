@@ -188,3 +188,50 @@ $to: 1024;
     border-radius: 3px;
     border: 1px solid color($color-theme, 100);
 }
+
+
+$start: 1;
+$end: 100;
+
+@for $i from $start to $end {
+
+    .padding-#{$i} {
+        padding: #{$i}px;
+    }
+
+    .padding-bottom-#{$i} {
+        padding-bottom: #{$i}px;
+    }
+
+    .padding-top-#{$i} {
+        padding-top: #{$i}px;
+    }
+
+    .padding-left-#{$i} {
+        padding-left: #{$i}px;
+    }
+
+    .padding-right-#{$i} {
+        padding-right: #{$i}px;
+    }
+
+    .margin-#{$i} {
+        margin: #{$i}px;
+    }
+
+    .margin-bottom-#{$i} {
+        margin-bottom: #{$i}px;
+    }
+
+    .margin-left-#{$i} {
+        margin-left: #{$i}px;
+    }
+
+    .margin-right-#{$i} {
+        margin-right: #{$i}px;
+    }
+
+    .margin-top-#{$i} {
+        margin-top: #{$i}px;
+    }
+}

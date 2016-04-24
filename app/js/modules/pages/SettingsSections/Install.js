@@ -27,7 +27,7 @@ var install = (plugin, state) => {
 
 var uninstall = (plugin, state) => {
     setLoading(plugin, true, state)
-    
+
     ipc.send('remove-plugin', plugin.get('full_name'))
 }
 

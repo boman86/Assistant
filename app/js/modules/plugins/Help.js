@@ -31,7 +31,7 @@ module.exports = robot => {
             })
 
             // Render
-            var element = h('table.table.table-hover', {}, [
+            var element = h('table.shadow-2.table.table-hover', {}, [
                 h('thead', {}, [
                     h('tr', {}, [
                         h('th', {}, [

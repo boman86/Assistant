@@ -23,6 +23,10 @@ class Robot {
         this.loadVoices()
     }
 
+    uuid() {
+        return uuid()
+    }
+
     registerPlugin(p) {
         this[Observers] = this[Observers].push(
             Immutable.Map({

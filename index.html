@@ -167,7 +167,7 @@
 
     pluginManager.loadFrom(`${__dirname}/dist/js/modules/plugins/playground`)
 
-    /** Print Help Card */
+    /** Execute Startup Commands */
     console.log(`Executing: [${userConfig.startup.join(', ')}]`)
     userConfig.startup.forEach(start => {
         setTimeout(() => {

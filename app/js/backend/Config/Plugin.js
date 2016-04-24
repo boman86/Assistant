@@ -65,10 +65,8 @@ class PluginConfig {
 
             return plugin
         }
-
-        setTimeout(() => {
-          done()
-        })
+        
+        done()
 
         return false
     }
