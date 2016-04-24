@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "debounce": "^1.0.0",
+    "dialogs": "^1.1.12",
     "electron-webrtc": "^0.2.2",
     "electron-window-state": "^2.0.0",
     "git-clone": "^0.1.0",
