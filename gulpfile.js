@@ -1,55 +1,16 @@
-var gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    csso = require('gulp-csso'),
-    plumber = require('gulp-plumber'),
-    gutil = require('gulp-util'),
-    babel = require('gulp-babel');
+var elixir = require('laravel-elixir');
+var fs = require('fs');
 
-var config = {
-    src: {
-        css: {
-            files: 'app/scss/**/*.scss',
-            themes: 'app/scss/themes/*.scss'
-        },
-        html: '**/*.html',
-        js: 'app/js/**/*.js'
-    },
-    dest: {
-        css: 'dist/css',
-        js: 'dist/js'
-    }
-};
+elixir.config.assetsPath = 'app';
+elixir.config.publicPath = 'dist';
+elixir.config.css.sass.folder = 'scss';
+elixir.config.sourcemaps = false;
 
-var onError = function (err) {
-  gutil.beep();
-  gutil.log(err);
-  this.emit('end');
-}
+var themes = fs.readdirSync('app/scss/themes/');
 
-gulp.task('watch', ['build'], function() {
-    gulp.watch(config.src.css.files, ['css']);
-    gulp.watch(config.src.js, ['js']);
-    gulp.watch(config.src.html);
-});
-
-gulp.task('css', function() {
-    return gulp.src(config.src.css.themes)
-        .pipe(plumber({
-            errorHandler: onError
-        }))
-        .pipe(sass())
-        .pipe(csso())
-        .pipe(gulp.dest(config.dest.css));
-});
-
-gulp.task('js', function () {
-    return gulp.src(config.src.js)
-        .pipe(plumber({
-            errorHandler: onError
-        }))
-        .pipe(babel())
-        .pipe(gulp.dest(config.dest.js));
-});
-
-gulp.task('build', ['css', 'js']);
-gulp.task('default', ['watch']);
+elixir(function(mix) {
+    themes.forEach(function(theme) {
+        mix.sass('themes/' + theme);
+    })
+    mix.browserify('main.js');
+})
